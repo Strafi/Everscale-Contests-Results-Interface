@@ -9,8 +9,33 @@ class DatabaseApi {
 		})
 	}
 
-	getContests(skip = 0) {
-		return this.client.getEntries({ skip });
+	getContests(params = {}) {
+		const { skip = 0, government, address } = params;
+		const query = {
+			skip,
+			content_type: 'contest',
+		};
+
+		if (government)
+			query['fields.government'] = government;
+
+		if (address)
+			query['fields.address'] = address;
+
+		return this.client.getEntries(query);
+	}
+
+	async getContestByAddress(address) {
+		try {
+			const res = await this.getContests({ address });
+			const contestInfo = res.items[0].fields;
+			
+			return contestInfo;
+		} catch(err) {
+			console.warn('No contest found in DB by address: ', address);
+
+			return {}
+		}
 	}
 }
 

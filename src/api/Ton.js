@@ -1,7 +1,7 @@
 import { TonClient } from '@tonclient/core';
 import { libWeb } from '@tonclient/lib-web';
 
-import contestAbi from 'contest.abi';
+import contestAbi from 'src/contest.abi';
 
 class TonApi {
 	constructor() {
@@ -17,9 +17,6 @@ class TonApi {
 				server_address: 'main.ton.dev',
 			},
 		});
-
-		this.client.crypto.generate_random_sign_keys()
-			.then(keys => this.keys = keys);
 	}
 
 	async getContestSubmissions(contestAddress) {
@@ -32,7 +29,6 @@ class TonApi {
 			const submissions = contendersInfo.ids.map((id, index) => {
 				const createdAtTimestamp = parseInt(contendersInfo.appliedAts[index].substr(0, 10), 10);
 				const createdAtDate = new Date(createdAtTimestamp * 1000);
-				console.log(contendersInfo)
 
 				return {
 					id: parseInt(id, 10),
@@ -86,13 +82,33 @@ class TonApi {
 				this.runContestFunction(contestAddress, 'getContestProgress'),
 			]);
 			const [contestInfo, contestProgress] = infoAndProgress;
+
+			const link = Buffer.from(contestInfo.link, 'hex').toString();
+			const title = Buffer.from(contestInfo.title, 'hex').toString();
 	
 			return {
 				...contestInfo,
 				...contestProgress,
+				link,
+				title,
 			};
 		} catch(err) {
 			console.error('Getting full contest info failed:', err);
+		}
+	}
+
+	async isAddressValid(address) {
+		try {
+			const result = await this.client.utils.convert_address({
+				address,
+				output_format: {
+					type: 'Hex',
+				}
+			})
+
+			return !!result;
+		} catch (err) {
+			return false;
 		}
 	}
 

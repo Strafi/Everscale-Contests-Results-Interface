@@ -1,9 +1,8 @@
-/* eslint-disable camelcase */
 import React, { Component } from 'react';
-
-import { DatabaseApi, TonApi } from 'api';
+import { connect } from 'react-redux';
+import { DatabaseApi, TonApi } from 'src/api';
+import { setBulkContestsInfo } from 'src/store/actions/contest';
 import ContestListItem from './ListItem';
-
 import './index.scss';
 
 class ContestsList extends Component {
@@ -11,54 +10,56 @@ class ContestsList extends Component {
 		contests: []
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
+		try {
+			this.fetchContests();
+		} catch(err) {
+			console.error('Fetching contests failed: ', err);
+
+			setTimeout(this.fetchContests, 5000);
+		}
+	}
+
+	fetchContests = async () => {
+		const { setBulkContestsInfo } = this.props;
+	
 		const contestsFromDB = await DatabaseApi.getContests();
 		const contestsWithFullInfo = await Promise.all(
 			contestsFromDB.items.map(contest => this.getContestFullInfo(contest))
 		);
 
-		this.setState({
-			contests: contestsWithFullInfo,
-		})
+		setBulkContestsInfo(contestsWithFullInfo);
 	}
 
 	getContestFullInfo = async contestFromDB => {
-		try {
-			const { address, government } = contestFromDB.fields;
-			const contestInfoFromBlockchain = await TonApi.getContestInfo(address);
-			
-			const link = Buffer.from(contestInfoFromBlockchain.link, 'hex').toString();
-			const title = Buffer.from(contestInfoFromBlockchain.title, 'hex').toString();
+		const { address, government, rewards } = contestFromDB.fields;
+		const contestInfoFromBlockchain = await TonApi.getContestInfo(address);
 
-			return {
-				...contestInfoFromBlockchain,
-				address,
-				government,
-				link,
-				title,
-			}
-		} catch(err) {
-			console.error(err);
-
-			return {
-				...contestFromDB.fields,
-			}
+		return {
+			...contestInfoFromBlockchain,
+			address,
+			government,
+			rewards,
 		}
 	}
 
 	renderContestItems = () => {
-		const { contests } = this.state;
+		const { contestsInfo } = this.props;
+		let contestItems = [];
 
-		const contestItems = contests.map(contest => (
-			<ContestListItem contest={contest} />
-		))
+		for (const [, contest] of contestsInfo) {
+			contestItems.push(<ContestListItem contest={contest} key={contest.address} />);
+		}
 
 		return contestItems;
 	}
 
 	render() {
-		const { contests } = this.state;
-		console.log(contests)
+		const { contestsInfo } = this.props;
+
+		if (!contestsInfo.size)
+			return (<div>Loading...</div>);
+
 		return (
 			<div className='contests-list'>
 				{this.renderContestItems()}
@@ -67,4 +68,12 @@ class ContestsList extends Component {
 	}
 }
 
-export default ContestsList;
+const mapStateToProps = ({ contest }) => {
+	const { contestsInfo } = contest;
+
+	return { contestsInfo }
+};
+
+export default connect(mapStateToProps, {
+	setBulkContestsInfo,
+})(ContestsList);

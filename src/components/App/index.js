@@ -1,9 +1,6 @@
-/* eslint-disable camelcase */
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-
-import { Header, ContestsList, Contest } from 'components';
-
+import { Header, ContestsList, Contest } from 'src/components';
 import './index.scss';
 
 class App extends Component {
@@ -13,7 +10,7 @@ class App extends Component {
 				<Header />
 				<Switch>
 					<Route exact path='/' component={ContestsList} />
-					<Route path='contest' component={Contest} />
+					<Route path='/contest' component={Contest} />
 				</Switch>
 			</div>
 		);

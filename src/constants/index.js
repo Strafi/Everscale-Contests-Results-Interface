@@ -1,5 +1,16 @@
-import GOVERNANCE from './governance';
+const EMPTY_ADDRESS = '0:0000000000000000000000000000000000000000000000000000000000000000';
+
+const SORT_BY_VALUES = {
+	DEFAULT: 'score',
+	PLACE: 'score',
+	REWARD: 'reward',
+	SUBMISSION_ID: 'id',
+	SCORE: 'score',
+	ACCEPTED: 'acceptAmount',
+	REJECTED: 'rejectAmount',
+}
 
 export {
-	GOVERNANCE
+	SORT_BY_VALUES,
+	EMPTY_ADDRESS
 }

@@ -1,3 +1,8 @@
 import { combineReducers } from 'redux';
+import contest from './contest';
 
-export default combineReducers({});
+const rootReducer = combineReducers({
+	contest
+});
+
+export default rootReducer;
