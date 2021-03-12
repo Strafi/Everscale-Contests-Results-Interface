@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { TonApi, DatabaseApi } from 'src/api';
 import { exportToExcel, processSubmissionsInfo } from 'src/helpers';
-import { setContestInfo, setSubmissionsInfo } from 'src/store/actions/contest';
+import { setContestInfo, setSubmissionsInfo, setJuryInfo } from 'src/store/actions/contest';
 import ContestHeader from './ContestHeader';
 import ContestTableHeader from './ContestTableHeader';
 import ContestTableBody from './ContestTableBody';
@@ -11,6 +11,10 @@ import './index.scss';
 
 class Contest extends Component {
 	tableRef = createRef(null)
+	state = {
+		isJuryView: false,
+		juryRewardPercent: 5,
+	}
 
 	componentDidMount() {
 		try {
@@ -25,9 +29,10 @@ class Contest extends Component {
 	fetchSubmissionsInfo = async () => {
 		const {
 			addressFromUrl,
-			contestsInfo,
+			contestInfo: contestInfoFromRedux,
 			setContestInfo,
 			setSubmissionsInfo,
+			setJuryInfo,
 			history
 		} = this.props;
 
@@ -36,19 +41,19 @@ class Contest extends Component {
 		if (!isValidAddress)
 			return history.push('/');
 
-		let fullContestInfo = contestsInfo.get(addressFromUrl)
+		let fullContestInfo = contestInfoFromRedux;
 
 		if (!fullContestInfo) {
 			fullContestInfo = await this.getContestFullInfo(addressFromUrl);
 
 			setContestInfo(fullContestInfo);
 		}
-		const { submissionsWithStats, jurorsStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl);
+
+		const { submissionsWithStats, juryStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl);
 		const processedSubmissions = processSubmissionsInfo(submissionsWithStats, fullContestInfo.rewards);
 
-		console.log(jurorsStats);
-
 		setSubmissionsInfo(addressFromUrl, processedSubmissions);
+		setJuryInfo(addressFromUrl, juryStats);
 	}
 
 	getContestFullInfo = async address => {
@@ -63,31 +68,52 @@ class Contest extends Component {
 		}
 	}
 
+	setJuryView = (isJuryView) => {
+		this.setState({ isJuryView })
+	}
+
 	exportExcel = () => {
+		const { contestInfo } = this.props;
+
+		if (!contestInfo)
+			return;
+
 		try {
-			const htmlTable = this.tableRef.current.outerHTML;
+			const htmlTable = this.tableRef.current.innerHTML;
 			
-			exportToExcel(htmlTable);
+			exportToExcel(htmlTable, contestInfo.title);
 		} catch(err) {
 			console.error('Table export failed: ', err);
 		}
 	}
 
 	render() {
-		const { submissionsInfo, contestsInfo, addressFromUrl } = this.props;
-		const contestInfo = contestsInfo.get(addressFromUrl);
-		const contestSubmissions = submissionsInfo.get(addressFromUrl);
+		const { contestSubmissions, contestInfo, contestJury } = this.props;
+		const { isJuryView, juryRewardPercent } = this.state;
 
-		if (!contestInfo || !contestSubmissions)
+		if (!contestInfo || !contestSubmissions || !contestJury)
 			return (<div>Loading...</div>)
 
-		console.log(contestInfo, contestSubmissions);
+		console.log(contestInfo, contestSubmissions, contestJury);
 		return (
-			<div className="contest">
-				<ContestHeader contestInfo={contestInfo} />
-				<ContestTableHeader contestInfo={contestInfo} />
-				<table ref={this.tableRef}>
-					<ContestTableBody contestSubmissions={contestSubmissions} />
+			<div className='contest'>
+				<ContestHeader
+					contestInfo={contestInfo}
+					isJuryView={isJuryView}
+					setJuryView={this.setJuryView}
+					exportExcel={this.exportExcel}
+				/>
+				<table id='table' className='contest-table' ref={this.tableRef}>
+					<ContestTableHeader
+						contestInfo={contestInfo}
+						isJuryView={isJuryView}
+					/>
+					<ContestTableBody
+						contestSubmissions={contestSubmissions}
+						contestJury={contestJury}
+						isJuryView={isJuryView}
+						juryRewardPercent={juryRewardPercent}
+					/>
 				</table>
 			</div>
 		);
@@ -95,15 +121,19 @@ class Contest extends Component {
 }
 
 const mapStateToProps = ({ contest }, { location }) => {
-	const { contestsInfo, submissionsInfo } = contest;
+	const { contestsInfo, submissionsInfo, jurorsInfo } = contest;
 
 	const searchString = location.search;
 	const searchParams = new URLSearchParams(searchString);
 	const addressFromUrl = searchParams.get('contestAddress');
+	const contestInfo = contestsInfo.get(addressFromUrl);
+	const contestSubmissions = submissionsInfo.get(addressFromUrl);
+	const contestJury = jurorsInfo.get(addressFromUrl);
 
 	return {
-		contestsInfo,
-		submissionsInfo,
+		contestInfo,
+		contestSubmissions,
+		contestJury,
 		addressFromUrl,
 	}
 };
@@ -111,6 +141,7 @@ const mapStateToProps = ({ contest }, { location }) => {
 const ContestWithRedux = connect(mapStateToProps, {
 	setContestInfo,
 	setSubmissionsInfo,
+	setJuryInfo,
 })(Contest);
 
 export default withRouter(ContestWithRedux);

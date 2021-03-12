@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { setContestInfo } from 'src/store/actions/contest';
 import { TonApi } from 'src/api';
 import { createContestUrl } from 'src/helpers';
-
+import { LensIcon } from 'src/components/icons';
 import './index.scss';
 
 class SearchBar extends Component {
@@ -59,11 +59,14 @@ class SearchBar extends Component {
 		return (
 			<div className='search-bar-container'>
 				<input
-					type="text"
+					className='search-bar-container__input'
+					type='text'
+					placeholder='Enter contest address'
 					value={inputValue}
 					onChange={this.handleInputChange}
 					onKeyPress={this.handleKeyPress}
 				/>
+				<LensIcon />
 			</div>
 		);
 	}

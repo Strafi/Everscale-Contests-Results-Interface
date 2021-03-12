@@ -2,11 +2,13 @@ import {
 	SET_CONTEST_INFO,
 	SET_BULK_CONTESTS_INFO,
 	SET_SUBMISSIONS_INFO,
+	SET_JURY_INFO,
 } from '../actions/contest';
 
 const initialState = {
 	contestsInfo: new Map(),
 	submissionsInfo: new Map(),
+	jurorsInfo: new Map(),
 }
   
 function contestReducer(state = initialState, action) {
@@ -36,12 +38,26 @@ function contestReducer(state = initialState, action) {
 		}
 
 		case SET_SUBMISSIONS_INFO: {
+			const { address, submissions } = payload;
+
 			const submissionsInfo = new Map(state.submissionsInfo);
-			submissionsInfo.set(payload.address, payload.submissions);
+			submissionsInfo.set(address, submissions);
 
 			return {
 				...state,
 				submissionsInfo,
+			}
+		}
+
+		case SET_JURY_INFO: {
+			const { address, juryStats } = payload;
+
+			const jurorsInfo = new Map(state.jurorsInfo);
+			jurorsInfo.set(address, juryStats);
+
+			return {
+				...state,
+				jurorsInfo,
 			}
 		}
 

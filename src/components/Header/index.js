@@ -8,6 +8,9 @@ class Header extends Component {
 			<header className='header-container'>
 				<h1>Free TON Contests Results</h1>
 				<SearchBar />
+				<div className='header-container__address-explanation'>
+					Where to find contest address?
+				</div>
 			</header>
 		);
 	}

@@ -4,7 +4,9 @@ import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom';
 import { TonApi, DatabaseApi } from 'src/api';
 import store from 'src/store'
-import App from 'src/components/App';
+import { App } from 'src/components';
+
+import 'src/styles/index.scss';
 
 require('dotenv').config();
 

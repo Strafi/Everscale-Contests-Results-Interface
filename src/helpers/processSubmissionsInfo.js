@@ -1,4 +1,4 @@
-import { SORT_BY_VALUES } from 'src/constants';
+import { SORT_BY_VALUES_PARTICIPANTS } from 'src/constants';
 import sortSubmissions from './sortSubmissions';
 import parseRewards from './parseRewards';
 
@@ -26,7 +26,7 @@ function processSubmissionsInfo(initialSubmissionsInfo, contestRewards) {
 		return newSubmInfo;
 	});
 
-	const sortedSubmissions = sortSubmissions(submissions, SORT_BY_VALUES.SCORE);
+	const sortedSubmissions = sortSubmissions(submissions, SORT_BY_VALUES_PARTICIPANTS.SCORE);
 	const submissionsWithFullInfo = getSubmissionsWithFullInfo(sortedSubmissions, contestRewards);
 
 	return submissionsWithFullInfo;

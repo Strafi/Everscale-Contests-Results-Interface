@@ -1,0 +1,55 @@
+@import '../../styles/colors.scss';
+
+.contests-list {
+	width: 100%;
+
+	&__item {
+		width: 100%;
+		padding: 18px 36px;
+
+		&--grey {
+			background-color: $light-grey;
+		}
+	}
+
+	&__item-title {
+		display: inline-block;
+		margin-bottom: 10px;
+		font-size: 20px;
+		font-weight: 600;
+		color: $black;
+	}
+
+	&__item-date {
+		font-size: 16px;
+		font-weight: 400;
+		color: $grey;
+	}
+}
+
+.subgov-switcher {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 330px;
+	margin-bottom: 30px;
+
+	&__title {
+		font-size: 20px;
+		font-weight: 700;
+	}
+
+	&__switch-block {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 40px;
+		width: 225px;
+		padding: 0 14px;
+		font-size: 16px;
+		font-weight: 400;
+		background-color: $dark-grey-switcher;
+		border-radius: 11px;
+		user-select: none;
+	}
+}

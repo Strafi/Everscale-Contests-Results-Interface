@@ -7,11 +7,13 @@ class App extends Component {
 	render() {
 		return (
 			<div className='app-container'>
-				<Header />
-				<Switch>
-					<Route exact path='/' component={ContestsList} />
-					<Route path='/contest' component={Contest} />
-				</Switch>
+				<div className='app-container__flex-wrapper'>
+					<Header />
+					<Switch>
+						<Route exact path='/' component={ContestsList} />
+						<Route path='/contest' component={Contest} />
+					</Switch>
+				</div>
 			</div>
 		);
 	}

@@ -1,9 +1,9 @@
-import { SORT_BY_VALUES } from 'src/constants';
+import { SORT_BY_VALUES_PARTICIPANTS } from 'src/constants';
 
-function sortSubmissions(submission, sortBy = SORT_BY_VALUES.DEFAULT, isAskending = false) {
+function sortSubmissions(submission, sortBy = SORT_BY_VALUES_PARTICIPANTS.DEFAULT, isAskending = false) {
 	let sortedSubmissions;
 
-	if (sortBy === SORT_BY_VALUES.REWARD) {
+	if (sortBy === SORT_BY_VALUES_PARTICIPANTS.REWARD) {
 		sortedSubmissions = submission;
 	} else {
 		sortedSubmissions = submission.sort((a, b) => {

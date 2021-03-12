@@ -1,0 +1,56 @@
+@import '../../styles/colors.scss';
+
+.contest {
+	width: 100%;
+}
+
+.contest-table {
+	width: 100%;
+	border-spacing: 0;
+
+	&__header {
+
+	}
+
+	&__header-hidden-line {
+		display: none;
+	}
+
+	&__row {
+		&--grey {
+			background-color: $light-grey;
+		}
+
+		&--total-row {
+			background-color: $dark-grey;
+		}
+	}
+
+	&__cell {
+		vertical-align: middle;
+		height: 50px;
+		font-size: 16px;
+		font-weight: 600;
+		color: $dark-black;
+
+		&--th {
+			font-weight: 700;
+		}
+
+		&--wallet {
+			max-width: 90px;
+
+			a {
+				max-width: 90px;
+			}
+		}
+
+		a {
+			display: block;
+			color: $blue;
+			text-decoration: underline;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}

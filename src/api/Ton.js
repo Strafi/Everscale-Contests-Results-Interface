@@ -25,6 +25,7 @@ class TonApi {
 
 		try {
 			const contendersInfo = await this.runContestFunction(contestAddress, 'getContendersInfo');
+			const juryStatsFromContract = await this.getJuryStatsFromContract(contestAddress);
 
 			const submissions = contendersInfo.ids.map((id, index) => {
 				const createdAtTimestamp = parseInt(contendersInfo.appliedAts[index].substr(0, 10), 10);
@@ -43,7 +44,7 @@ class TonApi {
 				};
 			});
 
-			const jurorsStats = {};
+			const juryStats = {};
 			const submissionsWithStats = await Promise.all(
 				submissions.map(async subm => { 
 					const votesPerJuror = await this.getVotesPerJurorForSubmission(contestAddress, subm.id);
@@ -62,11 +63,17 @@ class TonApi {
 
 					function updateJurorsStatFromCollection(collection, stat) {
 						collection.forEach(address => {
-							if (jurorsStats[address]) {
-								jurorsStats[address][stat] = (jurorsStats[address][stat] || 0) + 1;
+							if (juryStats[address]) {
+								juryStats[address][stat] = (juryStats[address][stat] || 0) + 1;
 							} else {
-								jurorsStats[address] = {
+								const juryId = juryStatsFromContract.find(stat => stat.addr === address)?.id;
+								const normalizedId = typeof juryId === 'string'
+									? parseInt(juryId, 10) + 1
+									: juryId;
+
+								juryStats[address] = {
 									[stat]: 1,
+									id: normalizedId,
 								}
 							}
 						})
@@ -83,9 +90,11 @@ class TonApi {
 				})
 			);
 
-			return { submissionsWithStats, jurorsStats };
+			return { submissionsWithStats, juryStats };
 		} catch(err) {
 			console.error('Getting contest submissions failed: ', err);
+
+			return { submissionsWithStats: [], juryStats: {} };
 		}
 	}
 
@@ -122,6 +131,18 @@ class TonApi {
 		} catch(err) {
 			console.error('Getting full contest info failed:', err);
 		}
+	}
+
+	async getJuryStatsFromContract(contestAddress) {
+		const contractRes = await this.runContestFunction(
+			contestAddress,
+			'getJuryStats',
+		);
+
+		if (!contractRes?.jury)
+			return [];
+
+		return Object.values(contractRes.jury);
 	}
 
 	async isAddressValid(address) {

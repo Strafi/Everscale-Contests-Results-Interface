@@ -1,0 +1,19 @@
+@import '../../styles/colors.scss';
+
+.header-container {
+	margin-bottom: 50px;
+
+	h1 {
+		margin-bottom: 26px;
+		font-size: 40px;
+		font-weight: 700;
+		color: $black;
+	}
+
+	&__address-explanation {
+		margin-top: 20px;
+		font-size: 16px;
+		color: $light-blue;
+		text-decoration: underline;
+	}
+}

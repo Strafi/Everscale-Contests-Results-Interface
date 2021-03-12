@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { DatabaseApi, TonApi } from 'src/api';
 import { setBulkContestsInfo } from 'src/store/actions/contest';
 import ContestListItem from './ListItem';
+import SubgovSwitcher from './SubgovSwitcher';
 import './index.scss';
 
 class ContestsList extends Component {
@@ -48,7 +49,11 @@ class ContestsList extends Component {
 		let contestItems = [];
 
 		for (const [, contest] of contestsInfo) {
-			contestItems.push(<ContestListItem contest={contest} key={contest.address} />);
+			contestItems.push(<ContestListItem
+				isGrey={contestItems.length % 2 === 0 || contestItems.length === 0}
+				contest={contest}
+				key={contest.address}
+			/>);
 		}
 
 		return contestItems;
@@ -62,7 +67,8 @@ class ContestsList extends Component {
 
 		return (
 			<div className='contests-list'>
-				{this.renderContestItems()}
+				<SubgovSwitcher />
+				{contestsInfo.size ? this.renderContestItems() : <div>Loading...</div>}
 			</div>
 		);
 	}

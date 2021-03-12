@@ -1,0 +1,70 @@
+@import '../../../styles/colors.scss';
+
+.contest-header {
+	&__header {
+		margin-bottom: 12px;
+		font-weight: 700;
+		font-size: 24px;
+	}
+
+	&__title {
+		font-weight: 600;
+		font-size: 20px;
+	}
+
+	&__controls {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		margin: 20px 0 30px;
+	}
+
+	&__view-switcher {
+		display: flex;
+		width: max-content;
+		height: 42px;
+	}
+
+	&__participants-view-button, &__jury-view-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 600;
+		font-size: 18px;
+		line-height: 22px;
+		color: $dark-blue;
+		border: 1px solid $dark-blue;
+		background-color: $white;
+
+		&--active {
+			color: $white;
+			font-weight: 700;
+			background-color: $dark-blue;
+		}
+	}
+
+	&__participants-view-button {
+		width: 180px;
+		border-radius: 20px 0 0 20px;
+	}
+
+	&__jury-view-button {
+		width: 100px;
+		border-radius: 0 20px 20px 0;
+	}
+
+	&__export-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		align-self: flex-end;
+		height: 44px;
+		width: 220px;
+		margin-left: auto;
+		font-size: 18px;
+		font-weight: 700;
+		color: $white;
+		background-color: $dark-green;
+		border-radius: 22px;
+	}
+}

@@ -1,1 +1,16 @@
+@import '../../styles/size.scss';
 
+.app-container {
+	width: 100%;
+	padding: 40px 20px;
+	overflow-x: hidden;
+
+	&__flex-wrapper {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		width: 100%;
+		max-width: $main-wrapper-max-width;
+		margin: 0 auto;
+	}
+}
