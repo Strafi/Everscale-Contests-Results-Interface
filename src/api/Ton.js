@@ -19,7 +19,7 @@ class TonApi {
 		});
 	}
 
-	async getContestSubmissions(contestAddress) {
+	async getContestSubmissionsAndJurors(contestAddress) {
 		if (!contestAddress)
 			return;
 
@@ -43,36 +43,63 @@ class TonApi {
 				};
 			});
 
-			const submissionsWithStats = Promise.all(
-				submissions.map(subm => this.getSubmissionWithStats(contestAddress, subm))
+			const jurorsStats = {};
+			const submissionsWithStats = await Promise.all(
+				submissions.map(async subm => { 
+					const votesPerJuror = await this.getVotesPerJurorForSubmission(contestAddress, subm.id);
+					const {
+						jurorsFor,
+						jurorsAbstained,
+						jurorsAgainst,
+						marks,
+					} = votesPerJuror;
+
+					const sumbStats = {
+						marks: marks,
+						abstainAmount: jurorsAbstained.length,
+						rejectAmount: jurorsAgainst.length,
+					};
+
+					function updateJurorsStatFromCollection(collection, stat) {
+						collection.forEach(address => {
+							if (jurorsStats[address]) {
+								jurorsStats[address][stat] = (jurorsStats[address][stat] || 0) + 1;
+							} else {
+								jurorsStats[address] = {
+									[stat]: 1,
+								}
+							}
+						})
+					}
+
+					updateJurorsStatFromCollection(jurorsFor, 'acceptAmount');
+					updateJurorsStatFromCollection(jurorsAbstained, 'abstainAmount');
+					updateJurorsStatFromCollection(jurorsAgainst, 'rejectAmount');
+
+					return {
+						...subm,
+						...sumbStats,
+					}
+				})
 			);
 
-			return submissionsWithStats;
+			return { submissionsWithStats, jurorsStats };
 		} catch(err) {
 			console.error('Getting contest submissions failed: ', err);
 		}
 	}
 
-	async getSubmissionWithStats(contestAddress, submmission) {
-		if (!contestAddress)
+	async getVotesPerJurorForSubmission(contestAddress, submId) {
+		if (!contestAddress || !submId)
 			return;
 
 		const votesPerJuror = await this.runContestFunction(
 			contestAddress,
 			'getVotesPerJuror',
-			{ id: submmission.id },
+			{ id: submId },
 		);
 
-		const sumbStats = {
-			marks: votesPerJuror.marks,
-			abstainAmount: votesPerJuror.jurorsAbstained.length,
-			rejectAmount: votesPerJuror.jurorsAgainst.length,
-		};
-
-		return {
-			...submmission,
-			...sumbStats,
-		};
+		return votesPerJuror;
 	}
 
 	async getContestInfo(contestAddress) {

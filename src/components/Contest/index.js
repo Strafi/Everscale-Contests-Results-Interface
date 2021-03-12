@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { TonApi, DatabaseApi } from 'src/api';
 import { exportToExcel, processSubmissionsInfo } from 'src/helpers';
 import { setContestInfo, setSubmissionsInfo } from 'src/store/actions/contest';
+import ContestHeader from './ContestHeader';
 import ContestTableHeader from './ContestTableHeader';
-import ContestTableSubmissionsBody from './ContestTableSubmissionsBody';
+import ContestTableBody from './ContestTableBody';
 import './index.scss';
 
 class Contest extends Component {
@@ -42,8 +43,10 @@ class Contest extends Component {
 
 			setContestInfo(fullContestInfo);
 		}
-		const submissions = await TonApi.getContestSubmissions(addressFromUrl);
-		const processedSubmissions = processSubmissionsInfo(submissions, fullContestInfo.rewards);
+		const { submissionsWithStats, jurorsStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl);
+		const processedSubmissions = processSubmissionsInfo(submissionsWithStats, fullContestInfo.rewards);
+
+		console.log(jurorsStats);
 
 		setSubmissionsInfo(addressFromUrl, processedSubmissions);
 	}
@@ -81,10 +84,10 @@ class Contest extends Component {
 		console.log(contestInfo, contestSubmissions);
 		return (
 			<div className="contest">
-				<div onClick={this.exportExcel}> heeeed </div>
+				<ContestHeader contestInfo={contestInfo} />
+				<ContestTableHeader contestInfo={contestInfo} />
 				<table ref={this.tableRef}>
-					{/* <ContestTableHeader contestInfo={contestInfo} /> */}
-					<ContestTableSubmissionsBody contestSubmissions={contestSubmissions} />
+					<ContestTableBody contestSubmissions={contestSubmissions} />
 				</table>
 			</div>
 		);
