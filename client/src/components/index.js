@@ -1,13 +1,6 @@
-import App from './App';
-import Header from './Header';
-import SearchBar from './SearchBar';
-import Contest from './Contest';
-import ContestsList from './ContestsList';
-
-export {
-	App,
-	Header,
-	SearchBar,
-	Contest,
-	ContestsList,
-}
+export { default as App } from './App';
+export { default as Header } from './Header';
+export { default as SearchBar } from './SearchBar';
+export { default as Contest } from './Contest';
+export { default as ContestsList } from './ContestsList';
+export { default as Loader } from './Loader';

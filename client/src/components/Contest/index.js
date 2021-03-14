@@ -5,6 +5,7 @@ import { TonApi, DatabaseApi } from 'src/api';
 import { exportToExcel, processSubmissionsInfo, sortSubmissions, sortJury } from 'src/helpers';
 import { setContestInfo, setSubmissionsInfo, setJuryInfo } from 'src/store/actions/contest';
 import { SORT_BY_VALUES_PARTICIPANTS, SORT_BY_VALUES_JURY } from 'src/constants';
+import { Loader } from 'src/components';
 import ContestHeader from './ContestHeader';
 import ContestTableHeader from './ContestTableHeader';
 import ContestTableBody from './ContestTableBody';
@@ -173,7 +174,7 @@ class Contest extends Component {
 		const { isJuryView, juryRewardPercent, submissionsSortParams, jurySortParams } = this.state;
 
 		if (!contestInfo || !contestSubmissions || !contestJury)
-			return (<div>Loading...</div>)
+			return (<div className='contest'><Loader /></div>)
 
 		console.log(contestInfo, contestSubmissions, contestJury);
 		return (
