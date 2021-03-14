@@ -8,14 +8,14 @@ const ListItem = ({ contest, isGrey }) => {
 	const listItemClassName = `contests-list__item ${isGrey ? 'contests-list__item--grey' : ''}`;
 
 	return (
-		<div to={linkAddress} className={listItemClassName}>
-			<Link to={linkAddress} className='contests-list__item-title'>
+		<Link to={linkAddress} className={listItemClassName}>
+			<div className='contests-list__item-title'>
 				{contest.title}
-			</Link>
+			</div>
 			<div className='contests-list__item-date'>
 				{date}
 			</div>
-		</div>
+		</Link>
 	);
 }
 

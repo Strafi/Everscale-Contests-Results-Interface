@@ -11,23 +11,30 @@ import './index.scss';
 class SearchBar extends Component {
 	state = {
 		inputValue: '',
+		isInvalidAddress: false,
 	}
 
 	searchContest = async () => {
 		const { inputValue: contestAddress } = this.state;
 		const { contestsInfo, history, setContestInfo } = this.props;
 
+		if (!contestAddress)
+			return;
+
 		const isValidAddress = await TonApi.isAddressValid(contestAddress);
 
 		if (!isValidAddress)
-			return history.push('/');
+			return this.setState({ isInvalidAddress: true });
 
-		const contestInfoFromRedux = contestsInfo.get(contestAddress);
+		const contestInfoFromRedux = contestsInfo[contestAddress];
 
 		if (!contestInfoFromRedux) {
 			const contestInfoFromBlockchain = await TonApi.getContestInfo(contestAddress);
-			contestInfoFromBlockchain.address = contestAddress;
 
+			if (!contestInfoFromBlockchain)
+				return this.setState({ isInvalidAddress: true });
+		
+			contestInfoFromBlockchain.address = contestAddress;
 			setContestInfo(contestInfoFromBlockchain);
 		}
 
@@ -38,7 +45,8 @@ class SearchBar extends Component {
 
 	handleInputChange = event => {
 		this.setState({
-			inputValue: event.target.value
+			inputValue: event.target.value,
+			isInvalidAddress: false,
 		});
 	}
 
@@ -54,10 +62,12 @@ class SearchBar extends Component {
 	}
 
 	render() {
-		const { inputValue } = this.state;
+		const { inputValue, isInvalidAddress } = this.state;
+
+		const searchBarClassName = `search-bar-container ${isInvalidAddress ? 'search-bar-container--invalid' : ''}`;
 
 		return (
-			<div className='search-bar-container'>
+			<div className={searchBarClassName}>
 				<input
 					className='search-bar-container__input'
 					type='text'
@@ -66,7 +76,7 @@ class SearchBar extends Component {
 					onChange={this.handleInputChange}
 					onKeyPress={this.handleKeyPress}
 				/>
-				<LensIcon />
+				<LensIcon onClick={this.searchContest} />
 			</div>
 		);
 	}

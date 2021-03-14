@@ -1,10 +1,15 @@
 const EMPTY_ADDRESS = '0:0000000000000000000000000000000000000000000000000000000000000000';
 
-const EXPLORER_BASE_URL = 'https://ton.live/accounts?section=details&id=';
+const EXPLORER_BASE_URL = 'https://ton.live/accounts/accountDetails?id=';
+
+const DEFAULT_GOVERNANCE = {
+	NAME: 'main',
+	FULL_NAME: 'Main',
+}
 
 const SORT_BY_VALUES_PARTICIPANTS = {
-	DEFAULT: 'score',
-	PLACE: 'score',
+	DEFAULT: 'place',
+	PLACE: 'place',
 	REWARD: 'reward',
 	SUBMISSION_ID: 'id',
 	SCORE: 'score',
@@ -12,8 +17,26 @@ const SORT_BY_VALUES_PARTICIPANTS = {
 	REJECTED: 'rejectAmount',
 }
 
+const SORT_BY_VALUES_JURY = {
+	DEFAULT: 'id',
+	REWARD: 'reward',
+	JURY_ID: 'id',
+	TOTAL_VOTES: 'totalVotes',
+	ACCEPTED: 'acceptAmount',
+	ABSTAINED: 'abstainAmount',
+	REJECTED: 'rejectAmount',
+}
+
+const DB_CONTENT_TYPES = {
+	CONTEST: 'contest',
+	GOVERNANCE: 'governance',
+}
+
 export {
 	SORT_BY_VALUES_PARTICIPANTS,
+	SORT_BY_VALUES_JURY,
 	EMPTY_ADDRESS,
 	EXPLORER_BASE_URL,
+	DB_CONTENT_TYPES,
+	DEFAULT_GOVERNANCE,
 }

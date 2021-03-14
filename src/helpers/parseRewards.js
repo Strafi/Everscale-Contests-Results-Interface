@@ -1,12 +1,12 @@
 const REWARDS_RANGE_SEPARATOR = '-';
 
 function parseRewards(rewards) {
-	const parsedRewards = {};
-
 	if (!rewards)
-		return parsedRewards;
+		return false;
 
 	try {
+		const parsedRewards = {};
+
 		for (const rewardsRange in rewards) {
 			const [rangeStart, rangeEnd] = rewardsRange.split(REWARDS_RANGE_SEPARATOR);
 
@@ -26,7 +26,7 @@ function parseRewards(rewards) {
 	} catch(err) {
 		console.error('Error while parsing rewards: ', err);
 
-		return parsedRewards;
+		return false;
 	}
 }
 

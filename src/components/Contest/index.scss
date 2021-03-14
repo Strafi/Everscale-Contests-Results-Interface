@@ -1,24 +1,36 @@
 @import '../../styles/colors.scss';
+@import '../../styles/mixins.scss';
 
 .contest {
 	width: 100%;
 }
 
+.contest-table-wrapper {
+	width: 100%;
+	overflow-x: auto;
+    white-space: nowrap;
+}
+
 .contest-table {
 	width: 100%;
+	min-width: 780px;
 	border-spacing: 0;
-
-	&__header {
-
-	}
 
 	&__header-hidden-line {
 		display: none;
 	}
 
 	&__row {
+		&--rejected {
+			background-color: $rejected-light;
+		}
+
 		&--grey {
 			background-color: $light-grey;
+
+			&.contest-table__row--rejected {
+				background-color: $rejected;
+			}
 		}
 
 		&--total-row {
@@ -27,30 +39,105 @@
 	}
 
 	&__cell {
+		$first-child-width: 85px;
+		$last-child-width: 85px;
 		vertical-align: middle;
+		text-align: center;
 		height: 50px;
+		width: 176px;
 		font-size: 16px;
 		font-weight: 600;
 		color: $dark-black;
 
-		&--th {
-			font-weight: 700;
+		&:first-child {
+			width: $first-child-width;
+			padding-left: 24px;
+			text-align: start;
 		}
 
-		&--wallet {
-			max-width: 90px;
+		&:last-child {
+			width: $last-child-width;
+			padding-right: 12px;
+			text-align: end;
+		}
 
-			a {
-				max-width: 90px;
+		&--th {
+			font-weight: 700;
+			color: $black;
+			user-select: none;
+
+			&:first-child {
+				width: $first-child-width;
+				padding-left: 4px;
+				text-align: start;
+			}
+
+			&:last-child {
+				width: $last-child-width;
+				padding-right: 4px;
+				text-align: end;
+			}
+
+			.arrow-icon {
+				width: 11px;
+				margin-left: 8px;
+
+				path {
+					fill: $black;
+				}
 			}
 		}
 
 		a {
-			display: block;
+			width: max-content;
 			color: $blue;
 			text-decoration: underline;
 			overflow: hidden;
 			text-overflow: ellipsis;
+
+			@include link-effects($blue);
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
+
+		&--active {
+			color: $dark-green;
+			cursor: pointer;
+			
+			.arrow-icon path {
+				fill: $dark-green;
+			}
+		}
+
+		&--askending {
+			.arrow-icon {
+				transform: rotate(180deg);
+			}
+		}
+
+		&--selectable {
+			cursor: pointer;
+		}
+
+		&--wallet {
+			a {
+				display: block;
+				width: $last-child-width;
+			}
+		}
+	}
+
+	&__reward-input {
+		height: 40px;
+		width: 130px;
+		padding: 10px 17px;
+		font-size: 14px;
+		font-weight: 300;
+		color: $black;
+		border: 1px solid $table-input-color;
+		border-radius: 6px;
+		outline: none;
 	}
 }

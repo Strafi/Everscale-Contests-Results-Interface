@@ -1,4 +1,5 @@
 import { createClient } from 'contentful';
+import { DB_CONTENT_TYPES, DEFAULT_GOVERNANCE } from 'src/constants';
 
 class DatabaseApi {
 	init() {
@@ -10,14 +11,16 @@ class DatabaseApi {
 	}
 
 	getContests(params = {}) {
-		const { skip = 0, government, address } = params;
+		const { skip = 0, governance, address } = params;
 		const query = {
 			skip,
-			content_type: 'contest',
+			content_type: DB_CONTENT_TYPES.CONTEST,
 		};
 
-		if (government)
-			query['fields.government'] = government;
+		if (governance) {
+			query['fields.governance.sys.contentType.sys.id'] = DB_CONTENT_TYPES.GOVERNANCE;
+			query['fields.governance.fields.name'] = governance;
+		}
 
 		if (address)
 			query['fields.address'] = address;
@@ -29,12 +32,31 @@ class DatabaseApi {
 		try {
 			const res = await this.getContests({ address });
 			const contestInfo = res.items[0].fields;
+			contestInfo.governance = contestInfo.governance.fields.name;
 			
 			return contestInfo;
 		} catch(err) {
 			console.warn('No contest found in DB by address: ', address);
 
-			return {}
+			return {
+				governance: DEFAULT_GOVERNANCE.NAME
+			}
+		}
+	}
+
+	async getGovernances() {
+		try {
+			const govRes = await this.client.getEntries({
+				content_type: DB_CONTENT_TYPES.GOVERNANCE,
+				order: 'fields.name',
+			});
+			const governances = govRes.items.map(item => item.fields);
+
+			return governances
+		} catch (err) {
+			console.error('Failed to fetch governances: ', err);
+
+			return [];
 		}
 	}
 }

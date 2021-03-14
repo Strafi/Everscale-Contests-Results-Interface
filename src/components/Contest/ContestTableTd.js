@@ -10,7 +10,6 @@ const ContestTableTd = ({ children, className, styles = {} }) => {
 		<td
 			style={styles}
 			className={fullClassName}
-			align='center'
 		>
 			{children}
 		</td>

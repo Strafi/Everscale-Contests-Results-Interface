@@ -1,4 +1,5 @@
 @import '../../../styles/colors.scss';
+@import '../../../styles/mixins.scss';
 
 .contest-header {
 	&__header {
@@ -35,6 +36,8 @@
 		color: $dark-blue;
 		border: 1px solid $dark-blue;
 		background-color: $white;
+		user-select: none;
+		cursor: pointer;
 
 		&--active {
 			color: $white;
@@ -53,6 +56,47 @@
 		border-radius: 0 20px 20px 0;
 	}
 
+	&__reward-input-container {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		height: 36px;
+		max-width: 230px;
+		margin-left: 20px;
+		border-bottom: 1px solid $grey;
+		transition: border-color .2s;
+
+		&--filled {
+			border-color: $dark-blue;
+
+			.contest-header__reward-input {
+				color: $dark-blue;
+			}
+
+			.checked-icon rect {
+				fill: $dark-blue;
+			}
+		}
+
+		.checked-icon {
+			width: 18px;
+			height: 14px;
+			margin-left: 3px;
+			transition: fill .2s;
+		}
+	}
+
+	&__reward-input {
+		height: 100%;
+		width: calc(100% - 25px);
+		font-size: 18px;
+		font-weight: 300;
+		color: $grey;
+		border: none;
+		outline: none;
+		transition: color .2s;
+	}
+
 	&__export-button {
 		display: flex;
 		align-items: center;
@@ -66,5 +110,7 @@
 		color: $white;
 		background-color: $dark-green;
 		border-radius: 22px;
+
+		@include export-button-effects($dark-green, $white);
 	}
 }

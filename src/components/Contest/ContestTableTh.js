@@ -11,7 +11,6 @@ const ContestTableTh = ({ children, className, onClick = () => false, styles = {
 			style={styles}
 			onClick={onClick}
 			className={fullClassName}
-			align='center'
 		>
 			{children}
 		</th>

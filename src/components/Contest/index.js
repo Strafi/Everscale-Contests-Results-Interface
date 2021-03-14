@@ -1,24 +1,60 @@
 import React, { Component, createRef } from 'react';
+import XLSX from 'xlsx';
+import { TableExport } from 'tableexport';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { TonApi, DatabaseApi } from 'src/api';
-import { exportToExcel, processSubmissionsInfo } from 'src/helpers';
+import { exportToExcel, processSubmissionsInfo, sortSubmissions, sortJury } from 'src/helpers';
 import { setContestInfo, setSubmissionsInfo, setJuryInfo } from 'src/store/actions/contest';
+import { SORT_BY_VALUES_PARTICIPANTS, SORT_BY_VALUES_JURY } from 'src/constants';
 import ContestHeader from './ContestHeader';
 import ContestTableHeader from './ContestTableHeader';
 import ContestTableBody from './ContestTableBody';
 import './index.scss';
 
+const defaultSubmissionsSortParams = {
+	field: SORT_BY_VALUES_PARTICIPANTS.DEFAULT,
+	isAskending: true,
+}
+
+const defaultJurySortParams = {
+	field: SORT_BY_VALUES_JURY.DEFAULT,
+	isAskending: true,
+}
+
 class Contest extends Component {
 	tableRef = createRef(null)
 	state = {
 		isJuryView: false,
-		juryRewardPercent: 5,
+		juryRewardPercent: undefined,
+		submissionsSortParams: defaultSubmissionsSortParams,
+		jurySortParams: defaultJurySortParams,
 	}
 
 	componentDidMount() {
 		try {
 			this.fetchSubmissionsInfo();
+		} catch(err) {
+			console.error('Fetching submissions failed: ', err);
+
+			setTimeout(this.fetchSubmissionsInfo, 5000);
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		try {
+			const { addressFromUrl } = this.props;
+
+			if (prevProps.addressFromUrl !== addressFromUrl) {
+				this.setJuryView(false);
+				this.setState({
+					isJuryView: false,
+					juryRewardPercent: undefined,
+					submissionsSortParams: defaultSubmissionsSortParams,
+					jurySortParams: defaultJurySortParams,
+				});
+				this.fetchSubmissionsInfo();
+			}
 		} catch(err) {
 			console.error('Fetching submissions failed: ', err);
 
@@ -35,6 +71,7 @@ class Contest extends Component {
 			setJuryInfo,
 			history
 		} = this.props;
+		const { jurySortParams } = this.state;
 
 		const isValidAddress = await TonApi.isAddressValid(addressFromUrl);
 
@@ -49,11 +86,15 @@ class Contest extends Component {
 			setContestInfo(fullContestInfo);
 		}
 
+		if (fullContestInfo.juryRewardPercent)
+			this.setJuryRewardPercent(fullContestInfo.juryRewardPercent);
+
 		const { submissionsWithStats, juryStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl);
 		const processedSubmissions = processSubmissionsInfo(submissionsWithStats, fullContestInfo.rewards);
+		const sortedJury = sortJury(juryStats, jurySortParams.field, jurySortParams.isAskending);
 
 		setSubmissionsInfo(addressFromUrl, processedSubmissions);
-		setJuryInfo(addressFromUrl, juryStats);
+		setJuryInfo(addressFromUrl, sortedJury);
 	}
 
 	getContestFullInfo = async address => {
@@ -61,15 +102,14 @@ class Contest extends Component {
 			TonApi.getContestInfo(address),
 			DatabaseApi.getContestByAddress(address)
 		]);
+		const { governance } = contestInfoFromDB;
 
 		return {
 			...contestInfoFromBlockchain,
 			...contestInfoFromDB,
+			address,
+			governance,
 		}
-	}
-
-	setJuryView = (isJuryView) => {
-		this.setState({ isJuryView })
 	}
 
 	exportExcel = () => {
@@ -79,6 +119,18 @@ class Contest extends Component {
 			return;
 
 		try {
+			// const tableToExport = new TableExport(document.getElementById('table'), {
+			// 	filename: contestInfo.title,
+			// 	sheetname: contestInfo.title.slice(0, 30),
+			// 	formats: ["xlsx"],
+			// });
+
+			// var tbl = document.getElementById('table');
+			// var wb = XLSX.utils.table_to_book(tbl, { raw: true });
+			// wb.Sheets.Sheet1.G4.v = `=E7+E8`;
+			// console.log(wb);
+			// XLSX.writeFile(wb, 'test.xlsx')
+
 			const htmlTable = this.tableRef.current.innerHTML;
 			
 			exportToExcel(htmlTable, contestInfo.title);
@@ -87,9 +139,57 @@ class Contest extends Component {
 		}
 	}
 
+	setJuryView = isJuryView => {
+		this.setState({ isJuryView });
+	}
+
+	setJuryRewardPercent = rewardPercent => {
+		this.setState({ juryRewardPercent: rewardPercent });
+	}
+
+	sortJury = newSortField => {
+		const { contestJury, setJuryInfo, addressFromUrl } = this.props;
+		const { field, isAskending } = this.state.jurySortParams;
+		const isAskendingChange = newSortField === field;
+
+		const newSortParams = {
+			field: newSortField,
+			isAskending: isAskendingChange ? !isAskending : isAskending,
+		}
+
+		const sortedJury = sortJury(
+			contestJury,
+			newSortParams.field,
+			newSortParams.isAskending
+		);
+
+		setJuryInfo(addressFromUrl, sortedJury);
+		this.setState({ jurySortParams: newSortParams });
+	}
+
+	sortSubmissions = newSortField => {
+		const { contestSubmissions, setSubmissionsInfo, addressFromUrl } = this.props;
+		const { field, isAskending } = this.state.submissionsSortParams;
+		const isAskendingChange = newSortField === field;
+
+		const newSortParams = {
+			field: newSortField,
+			isAskending: isAskendingChange ? !isAskending : isAskending,
+		}
+
+		const sortedSubmissions = sortSubmissions(
+			contestSubmissions,
+			newSortParams.field,
+			newSortParams.isAskending
+		);
+
+		setSubmissionsInfo(addressFromUrl, sortedSubmissions);
+		this.setState({ submissionsSortParams: newSortParams });
+	}
+
 	render() {
-		const { contestSubmissions, contestInfo, contestJury } = this.props;
-		const { isJuryView, juryRewardPercent } = this.state;
+		const { contestSubmissions, contestInfo, contestJury, addressFromUrl } = this.props;
+		const { isJuryView, juryRewardPercent, submissionsSortParams, jurySortParams } = this.state;
 
 		if (!contestInfo || !contestSubmissions || !contestJury)
 			return (<div>Loading...</div>)
@@ -100,21 +200,30 @@ class Contest extends Component {
 				<ContestHeader
 					contestInfo={contestInfo}
 					isJuryView={isJuryView}
+					juryRewardPercent={juryRewardPercent}
 					setJuryView={this.setJuryView}
+					setJuryRewardPercent={this.setJuryRewardPercent}
 					exportExcel={this.exportExcel}
 				/>
-				<table id='table' className='contest-table' ref={this.tableRef}>
-					<ContestTableHeader
-						contestInfo={contestInfo}
-						isJuryView={isJuryView}
-					/>
-					<ContestTableBody
-						contestSubmissions={contestSubmissions}
-						contestJury={contestJury}
-						isJuryView={isJuryView}
-						juryRewardPercent={juryRewardPercent}
-					/>
-				</table>
+				<div className='contest-table-wrapper'>
+					<table id='table' className='contest-table' ref={this.tableRef}>
+						<ContestTableHeader
+							contestInfo={contestInfo}
+							isJuryView={isJuryView}
+							submissionsSortParams={submissionsSortParams}
+							jurySortParams={jurySortParams}
+							sortSubmissions={this.sortSubmissions}
+							sortJury={this.sortJury}
+						/>
+						<ContestTableBody
+							contestSubmissions={contestSubmissions}
+							contestJury={contestJury}
+							contestAddress={addressFromUrl}
+							isJuryView={isJuryView}
+							juryRewardPercent={juryRewardPercent}
+						/>
+					</table>
+				</div>
 			</div>
 		);
 	}
@@ -126,9 +235,9 @@ const mapStateToProps = ({ contest }, { location }) => {
 	const searchString = location.search;
 	const searchParams = new URLSearchParams(searchString);
 	const addressFromUrl = searchParams.get('contestAddress');
-	const contestInfo = contestsInfo.get(addressFromUrl);
-	const contestSubmissions = submissionsInfo.get(addressFromUrl);
-	const contestJury = jurorsInfo.get(addressFromUrl);
+	const contestInfo = contestsInfo[addressFromUrl];
+	const contestSubmissions = submissionsInfo[addressFromUrl];
+	const contestJury = jurorsInfo[addressFromUrl];
 
 	return {
 		contestInfo,

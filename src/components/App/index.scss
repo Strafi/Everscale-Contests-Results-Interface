@@ -1,8 +1,10 @@
 @import '../../styles/size.scss';
 
 .app-container {
+	position: relative;
 	width: 100%;
-	padding: 40px 20px;
+	min-height: 100vh;
+	padding: 40px 60px;
 	overflow-x: hidden;
 
 	&__flex-wrapper {

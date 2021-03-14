@@ -7,6 +7,7 @@
 	height: 36px;
 	max-width: 460px;
 	border-bottom: 1px solid $grey;
+	transition: border-color .2s;
 
 	&__input {
 		height: 100%;
@@ -15,11 +16,44 @@
 		font-size: 18px;
 		border: none;
 		outline: none;
+		transition: color .2s;
+	}
+
+	&--invalid {
+		border-color: $red;
+
+		.search-bar-container__input {
+			color: $red;
+		}
+
+		.lens-icon {
+			path, line {
+				stroke: $red;
+			}
+		}
+	}
+
+	&:not(.search-bar-container--invalid) {
+		.lens-icon {
+			&:hover {
+				path, line {
+					stroke: $black;
+				}
+			}
+	
+			&:active {
+				path, line {
+					stroke: $dark-black;
+				}
+			}
+		}
 	}
 
 	.lens-icon {
 		width: 22px;
 		height: 20px;
 		margin-left: 3px;
+		transition: stroke .2s;
+		cursor: pointer;
 	}
 }

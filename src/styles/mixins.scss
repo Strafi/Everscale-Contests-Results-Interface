@@ -1,0 +1,42 @@
+@mixin link-effects($color) {
+	transition: color .2s;
+	cursor: pointer;
+
+	&:hover {
+		color: darken($color, 15%);
+	}
+
+	&:active {
+		color: darken($color, 20%);
+	}
+}
+
+@mixin button-effects($background-color, $color) {
+	transition: background-color .2s, color .2s;
+	cursor: pointer;
+
+	&:hover {
+		color: darken($color, 7%);
+		background-color: darken($background-color, 7%);
+	}
+
+	&:active {
+		color: darken($color, 10%);
+		background-color: darken($background-color, 10%);
+	}
+}
+
+@mixin export-button-effects($background-color, $color) {
+	transition: background-color .2s, color .2s;
+	cursor: pointer;
+
+	&:hover {
+		color: darken($color, 4%);
+		background-color: darken($background-color, 4%);
+	}
+
+	&:active {
+		color: darken($color, 6%);
+		background-color: darken($background-color, 7%);
+	}
+}

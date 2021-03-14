@@ -1,5 +1,5 @@
 function exportToExcel(htmlTable, contestTitle) {
-	const baseUri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+	const baseUri = 'data:application/vnd.ms-excel;base64,';
 	const template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
 	
 	const base64 = string => {
@@ -13,13 +13,13 @@ function exportToExcel(htmlTable, contestTitle) {
 	};
 
 	const downloadTable = url => {
-		const link = document.createElement("a");
-		link.download = `${contestTitle}.xlsx`;
+		const link = document.createElement('a');
+		link.download = `${contestTitle}.xls`;
 		link.href = url;
 		link.click();
 	}
 
-	const formatedTable = htmlTable.replace(/<input[^>]*>|<\/input>/gi, "");
+	const formatedTable = htmlTable.replace(/<input[^>]*>|<\/input>/gi, '');
 	const ctx = {
 		worksheet : contestTitle,
 		table : formatedTable

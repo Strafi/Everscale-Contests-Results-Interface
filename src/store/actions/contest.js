@@ -1,7 +1,9 @@
 export const SET_CONTEST_INFO = 'contest/SET_CONTEST_INFO';
 export const SET_BULK_CONTESTS_INFO = 'contest/SET_BULK_CONTESTS_INFO';
+export const ADD_BULK_CONTESTS_INFO = 'contest/ADD_BULK_CONTESTS_INFO';
 export const SET_SUBMISSIONS_INFO = 'contest/SET_SUBMISSIONS_INFO';
 export const SET_JURY_INFO = 'contest/SET_JURY_INFO';
+export const UPDATE_SUBMISSION_REWARD = 'contest/UPDATE_SUBMISSION_REWARD';
 
 export const setContestInfo = contest => dispatch => {
 	dispatch({
@@ -13,6 +15,13 @@ export const setContestInfo = contest => dispatch => {
 export const setBulkContestsInfo = bulkContests => dispatch => {
 	dispatch({
 		type: SET_BULK_CONTESTS_INFO,
+		payload: bulkContests
+	})
+}
+
+export const addBulkContestsInfo = bulkContests => dispatch => {
+	dispatch({
+		type: ADD_BULK_CONTESTS_INFO,
 		payload: bulkContests
 	})
 }
@@ -34,5 +43,12 @@ export const setJuryInfo = (address, juryStats) => dispatch => {
 			address,
 			juryStats,
 		},
+	})
+}
+
+export const updateSubmissionReward = payload => dispatch => {
+	dispatch({
+		type: UPDATE_SUBMISSION_REWARD,
+		payload,
 	})
 }
