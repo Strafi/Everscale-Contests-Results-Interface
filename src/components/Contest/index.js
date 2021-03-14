@@ -125,11 +125,8 @@ class Contest extends Component {
 			// 	formats: ["xlsx"],
 			// });
 
-			// var tbl = document.getElementById('table');
-			// var wb = XLSX.utils.table_to_book(tbl, { raw: true });
-			// wb.Sheets.Sheet1.G4.v = `=E7+E8`;
-			// console.log(wb);
-			// XLSX.writeFile(wb, 'test.xlsx')
+			// const edata = tableToExport.getExportData();
+			// console.log(edata);
 
 			const htmlTable = this.tableRef.current.innerHTML;
 			
