@@ -1,4 +1,4 @@
-import exportExcel from './exportExcel';
+import exportExcel from './exportExcel.js';
 
 export {
 	exportExcel,
