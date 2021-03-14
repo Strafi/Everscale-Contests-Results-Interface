@@ -15,6 +15,7 @@ const initialState = {
   
 function contestReducer(state = initialState, action) {
 	const { type, payload } = action;
+
 	switch (type) {
 		case SET_CONTEST_INFO: {
 			const contestsInfo = { ...state.contestsInfo };

@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { setSelectedSubgov } from 'src/store/actions/common';
 import { ArrowIcon } from 'src/components/icons';
 
-const SubgovSwitcher = ({ governances, selectedGovernance, selectGovernance }) => {
+const SubgovSwitcher = ({ governances, selectedGovernance }) => {
 	const switcherBlockRef = useRef(null);
 	const [isListOpen, setIsListOpen] = useState(false);
 
@@ -34,17 +36,19 @@ const SubgovSwitcher = ({ governances, selectedGovernance, selectGovernance }) =
 			>
 				{`Subgov: ${selectedGovernance.fullName}`}
 				<ArrowIcon />
-				<SubgovList isListOpen={isListOpen} governances={listGovernances} selectGovernance={selectGovernance} />
+				<SubgovList isListOpen={isListOpen} governances={listGovernances} />
 			</div>
 		</div>
 	);
 }
 
-const SubgovList = ({ governances, selectGovernance, isListOpen }) => {
+const SubgovList = ({ governances, isListOpen }) => {
+	const dispatch = useDispatch();
+
 	const governancesToRender = governances.map(gov => (
 		<div
 			className='subgov-switcher__list-item'
-			onClick={() => selectGovernance(gov)}
+			onClick={() => dispatch(setSelectedSubgov(gov))}
 			key={gov.name}
 		>
 			{gov.fullName}

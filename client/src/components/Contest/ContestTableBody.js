@@ -1,5 +1,5 @@
 import React from 'react';
-import { createWalletUrl } from 'src/helpers';
+import { createWalletUrl, formatRewardToShow } from 'src/helpers';
 import Td from './ContestTableTd';
 import RewardInput from './RewardInput';
 import { greenCellStyles, redCellStyles } from './styles';
@@ -25,6 +25,7 @@ const ContestTableBody = ({
 		const walletUrl = createWalletUrl(submission.participantAddress);
 
 		const shouldShowInput = !submission.isRejected && submission.reward === -1;
+		const rewardToShow = formatRewardToShow(submission.reward);
 
 		return (
 			<tr className={rowClassName} key={`${submission.participantAddress}${submission.id}`}>
@@ -35,7 +36,7 @@ const ContestTableBody = ({
 							contestAddress={contestAddress}
 							submissionId={submission.id}
 						/>
-						: submission.reward
+						: rewardToShow
 					}
 				</Td>
 				<Td>
@@ -80,22 +81,22 @@ const ContestTableBody = ({
 				id,
 			} = contestJury[juryAddr];
 			const juryVotes = acceptAmount + rejectAmount;
-			let normalizedReward
+			let reward
 
 			if (typeof juryRewardPercent === 'number' && !Number.isNaN(juryRewardPercent) && totalRewardForParticipants) {
-				const reward = juryVotes / (totalAccept + totalReject) * totalRewardForParticipants * juryRewardPercent / 100;
-				normalizedReward = +reward.toFixed(2);
-				totalRewardForJury += normalizedReward;
+				reward = juryVotes / (totalAccept + totalReject) * totalRewardForParticipants * juryRewardPercent / 100;
+				totalRewardForJury += reward;
 			}
 			
 			const isGrey = juryToRender.length === 0 || juryToRender.length % 2 === 0;
 			const rowClassName = `contest-table__row ${isGrey ? 'contest-table__row--grey' : ''}`;
 			const walletUrl = createWalletUrl(juryAddr);
+			const rewardToShow = formatRewardToShow(+reward.toFixed(2));
 
 			juryToRender.push(
 				<tr className={rowClassName} key={juryAddr}>
 					<Td>{id}</Td>
-					<Td>{normalizedReward}</Td>
+					<Td>{rewardToShow}</Td>
 					<Td>{juryVotes + abstainAmount}</Td>
 					<Td styles={greenCellStyles}>{acceptAmount}</Td>
 					<Td>{abstainAmount}</Td>
@@ -120,7 +121,7 @@ const ContestTableBody = ({
 				{
 					isJuryView
 					? <>
-						<Td>{totalRewardForJury ? totalRewardForJury.toFixed(2) : ''}</Td>
+						<Td>{totalRewardForJury ? formatRewardToShow(+totalRewardForJury.toFixed(2)) : ''}</Td>
 						<Td>{totalAccept + totalReject + totalAbstain}</Td>
 						<Td styles={greenCellStyles}>{totalAccept}</Td>
 						<Td>{totalAbstain}</Td>
@@ -128,7 +129,7 @@ const ContestTableBody = ({
 						<Td />
 					</>
 					: <>
-						<Td>{totalRewardForParticipants || ''}</Td>
+						<Td>{formatRewardToShow(totalRewardForParticipants) || ''}</Td>
 						<Td />
 						<Td />
 						<Td />

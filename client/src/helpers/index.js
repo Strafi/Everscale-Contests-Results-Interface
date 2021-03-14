@@ -6,5 +6,6 @@ export { default as sortJury } from './sortJury';
 export { default as createContestUrl} from './createContestUrl';
 export { default as createWalletUrl } from './createWalletUrl';
 export { default as parseRewards } from './parseRewards';
+export { default as formatRewardToShow } from './formatRewardToShow';
 
 export { default as useSearchParams } from './hooks/useSearchParams';

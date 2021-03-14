@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { DatabaseApi, TonApi } from 'src/api';
 import { setBulkContestsInfo } from 'src/store/actions/contest';
-import { DEFAULT_GOVERNANCE } from 'src/constants';
 import ContestListItem from './ListItem';
 import SubgovSwitcher from './SubgovSwitcher';
 import './index.scss';
@@ -10,16 +9,12 @@ import './index.scss';
 class ContestsList extends Component {
 	state = {
 		governances: [],
-		selectedGovernance: {
-			name: DEFAULT_GOVERNANCE.NAME,
-			fullName: DEFAULT_GOVERNANCE.FULL_NAME,
-		},
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		try {
-			this.fetchContests();
-			this.fetchGovernances();
+			await this.fetchGovernances();
+			await this.fetchContests();
 		} catch(err) {
 			console.error('Fetching contests failed: ', err);
 
@@ -27,10 +22,10 @@ class ContestsList extends Component {
 		}
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	async componentDidUpdate(prevProps) {
 		try {
-			if (prevState.selectedGovernance.name !== this.state.selectedGovernance.name) {
-				this.fetchContests();
+			if (prevProps.selectedGovernance.name !== this.props.selectedGovernance.name) {
+				await this.fetchContests();
 			}
 		} catch(err) {
 			console.error('Fetching contests failed: ', err);
@@ -46,8 +41,7 @@ class ContestsList extends Component {
 	}
 
 	fetchContests = async () => {
-		const { setBulkContestsInfo } = this.props;
-		const { selectedGovernance } = this.state;
+		const { setBulkContestsInfo, selectedGovernance } = this.props;
 	
 		const contestsFromDB = await DatabaseApi.getContests({ governance: selectedGovernance.name });
 		const contestsWithFullInfo = await Promise.all(
@@ -82,20 +76,15 @@ class ContestsList extends Component {
 		return contestItems;
 	}
 
-	selectGovernance = newSelectedGovernance => {
-		this.setState({ selectedGovernance: newSelectedGovernance })
-	}
-
 	render() {
-		const { contestsInfo } = this.props;
-		const { selectedGovernance, governances } = this.state;
+		const { contestsInfo, selectedGovernance } = this.props;
+		const { governances } = this.state;
 
 		return (
 			<div className='contests-list'>
 				<SubgovSwitcher
 					governances={governances}
 					selectedGovernance={selectedGovernance}
-					selectGovernance={this.selectGovernance}
 				/>
 				{contestsInfo.length ? this.renderContestItems() : <div>Loading...</div>}
 			</div>
@@ -103,10 +92,14 @@ class ContestsList extends Component {
 	}
 }
 
-const mapStateToProps = ({ contest }) => {
+const mapStateToProps = ({ contest, common }) => {
 	const { contestsInfo } = contest;
+	const { selectedGovernance } = common;
 
-	return { contestsInfo: Object.values(contestsInfo) }
+	return {
+		contestsInfo: Object.values(contestsInfo),
+		selectedGovernance,
+	}
 };
 
 export default connect(mapStateToProps, {
