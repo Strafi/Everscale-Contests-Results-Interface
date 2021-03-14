@@ -1,32 +1,73 @@
-function exportToExcel(htmlTable, contestTitle) {
-	const baseUri = 'data:application/vnd.ms-excel;base64,';
-	const template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
-	
-	const base64 = string => {
-		return window.btoa(unescape(encodeURIComponent(string)))
-	};
+function prepareSubmissions(contestSubmissions) {
+	return contestSubmissions.map(subm => ({
+		place: subm.place,
+		reward: subm.reward === -1 ? 0 : subm.reward,
+		id: subm.id,
+		score: subm.score,
+		acceptAmount: subm.acceptAmount,
+		rejectAmount: subm.rejectAmount,
+		address: subm.participantAddress,
+		link: subm.fileLink,
+	}));
+}
 
-	const format = (template, ctx) => {
-		return template.replace(/{(\w+)}/g, (m, p) => {
-			return ctx[p];
+function prepareJury(contestJury) {
+	const jury = [];
+
+	for (const juryAddr in contestJury) {
+		const {
+			acceptAmount = 0,
+			abstainAmount = 0,
+			rejectAmount = 0,
+			id,
+		} = contestJury[juryAddr];
+		const totalVotes = acceptAmount + rejectAmount + abstainAmount;
+
+		jury.push({
+			id,
+			totalVotes,
+			acceptAmount,
+			abstainAmount,
+			rejectAmount,
+			address: juryAddr,
 		})
-	};
+	}
+
+	return jury;
+}
+
+async function exportToExcel(contestInfo, contestSubmissions, contestJury, juryRewardPercent) {
+	const submissions = prepareSubmissions(contestSubmissions);
+	const jury = prepareJury(contestJury);
+
+	const infoToStringify = {
+		title: contestInfo.title,
+		link: contestInfo.link,
+		submissions,
+		jury,
+		juryRewardPercent,
+	}
+
+	const infoToSend = JSON.stringify(infoToStringify);
+
+	const res = await fetch('/api/v1/export-excel', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: infoToSend,
+	});
+
+	const blob = await res.blob();
 
 	const downloadTable = url => {
 		const link = document.createElement('a');
-		link.download = `${contestTitle}.xls`;
+		link.download = `${infoToStringify.title}.xlsx`;
 		link.href = url;
 		link.click();
-	}
+	};
 
-	const formatedTable = htmlTable.replace(/<input[^>]*>|<\/input>/gi, '');
-	const ctx = {
-		worksheet : contestTitle,
-		table : formatedTable
-	}
-	const url = baseUri + base64(format(template, ctx));
-
-	downloadTable(url);
+	downloadTable(URL.createObjectURL(blob));
 }
 
 export default exportToExcel;

@@ -1,6 +1,4 @@
-import React, { Component, createRef } from 'react';
-import XLSX from 'xlsx';
-import { TableExport } from 'tableexport';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { TonApi, DatabaseApi } from 'src/api';
@@ -23,7 +21,6 @@ const defaultJurySortParams = {
 }
 
 class Contest extends Component {
-	tableRef = createRef(null)
 	state = {
 		isJuryView: false,
 		juryRewardPercent: undefined,
@@ -112,25 +109,12 @@ class Contest extends Component {
 		}
 	}
 
-	exportExcel = () => {
-		const { contestInfo } = this.props;
-
-		if (!contestInfo)
-			return;
+	exportExcel = async () => {
+		const { contestInfo, contestSubmissions, contestJury } = this.props;
+		const { juryRewardPercent } = this.state;
 
 		try {
-			// const tableToExport = new TableExport(document.getElementById('table'), {
-			// 	filename: contestInfo.title,
-			// 	sheetname: contestInfo.title.slice(0, 30),
-			// 	formats: ["xlsx"],
-			// });
-
-			// const edata = tableToExport.getExportData();
-			// console.log(edata);
-
-			const htmlTable = this.tableRef.current.innerHTML;
-			
-			exportToExcel(htmlTable, contestInfo.title);
+			await exportToExcel(contestInfo, contestSubmissions, contestJury, juryRewardPercent);
 		} catch(err) {
 			console.error('Table export failed: ', err);
 		}
@@ -203,7 +187,7 @@ class Contest extends Component {
 					exportExcel={this.exportExcel}
 				/>
 				<div className='contest-table-wrapper'>
-					<table id='table' className='contest-table' ref={this.tableRef}>
+					<table className='contest-table'>
 						<ContestTableHeader
 							contestInfo={contestInfo}
 							isJuryView={isJuryView}

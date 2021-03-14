@@ -1,5 +1,5 @@
 import React from 'react';
-import { createWalletUrl, formatRewardToShow } from 'src/helpers';
+import { createWalletUrl, formatRewardToShow, calcRewardForJury } from 'src/helpers';
 import Td from './ContestTableTd';
 import RewardInput from './RewardInput';
 import { greenCellStyles, redCellStyles } from './styles';
@@ -80,11 +80,11 @@ const ContestTableBody = ({
 				rejectAmount = 0,
 				id,
 			} = contestJury[juryAddr];
-			const juryVotes = acceptAmount + rejectAmount;
+			const juryVotes = acceptAmount + rejectAmount + abstainAmount;
 			let reward
 
 			if (typeof juryRewardPercent === 'number' && !Number.isNaN(juryRewardPercent) && totalRewardForParticipants) {
-				reward = juryVotes / (totalAccept + totalReject) * totalRewardForParticipants * juryRewardPercent / 100;
+				reward = calcRewardForJury(acceptAmount, rejectAmount, totalAccept, totalReject, totalRewardForParticipants, juryRewardPercent);
 				totalRewardForJury += reward;
 			}
 			
@@ -97,7 +97,7 @@ const ContestTableBody = ({
 				<tr className={rowClassName} key={juryAddr}>
 					<Td>{id}</Td>
 					<Td>{rewardToShow}</Td>
-					<Td>{juryVotes + abstainAmount}</Td>
+					<Td>{juryVotes}</Td>
 					<Td styles={greenCellStyles}>{acceptAmount}</Td>
 					<Td>{abstainAmount}</Td>
 					<Td styles={redCellStyles}>{rejectAmount}</Td>

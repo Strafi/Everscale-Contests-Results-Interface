@@ -32,7 +32,7 @@ const DB_CONTENT_TYPES = {
 	GOVERNANCE: 'governance',
 }
 
-export {
+module.exports = {
 	SORT_BY_VALUES_PARTICIPANTS,
 	SORT_BY_VALUES_JURY,
 	EMPTY_ADDRESS,
