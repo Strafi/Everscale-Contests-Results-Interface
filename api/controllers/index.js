@@ -1,5 +1,5 @@
-import exportExcel from './exportExcel.js';
+const exportExcel = require('./exportExcel.js');
 
-export {
+module.exports = {
 	exportExcel,
 }

@@ -1,8 +1,8 @@
-import express from 'express';
-import { exportExcel } from '../controllers/index.js';
+const express = require('express');
+const { exportExcel } = require ('../controllers/index.js');
 
 const router = express.Router();
 
 router.post('/export-excel', exportExcel);
 
-export default router;
+module.exports = router;

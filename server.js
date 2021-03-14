@@ -1,7 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import api from './api/routes/index.js';
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const api = require('./api/routes/index.js');
 
 const app = express();
 

@@ -6,4 +6,4 @@ const exportExcel = (req, res, next) => {
     });
 };
 
-export default exportExcel;
+module.exports = exportExcel;
