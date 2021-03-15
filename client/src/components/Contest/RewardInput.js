@@ -12,13 +12,13 @@ const RewardInput = ({ contestAddress, submissionId }) => {
 
 		const reward = +event.target.value;
 
-		if (reward && !Number.isNaN(reward)) {
+		if (typeof reward === 'number' && !Number.isNaN(reward)) {
 			setReward(reward);
 		}
 	}
 
 	const updateRewardForSubmission = () => {
-		if (reward) {
+		if (typeof reward === 'number' && !Number.isNaN(reward)) {
 			dispatch(updateSubmissionReward({
 				contestAddress,
 				submissionId,

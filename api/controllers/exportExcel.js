@@ -113,8 +113,10 @@ const exportExcel = (req, res, next) => {
 		jury.forEach((jur, index) => {
 			const isLight = !(index % 2 === 0 || index === 0);
 			JurySheet.cell(baseRowForCycle, 1).number(jur.id).style(isLight ? defaultStyle : defaultStyleDark);
+			const totalSubmRewardCell = `${SUBMISSIONS_SHEET_NAME}!$${colSubmReward}$${rowSubmReward}`;
+			const juryRewardMultiplier = juryRewardPercent ? juryRewardPercent / 100 : 0;
 			JurySheet.cell(baseRowForCycle, 2)
-				.formula(`(${colJurTotal}${baseRowForCycle}-${colJurAbst}${baseRowForCycle})/($${colJurTotal}$${lastJuryRow}-$${colJurAbst}$${lastJuryRow})*${SUBMISSIONS_SHEET_NAME}!$${colSubmReward}$${rowSubmReward} * ${juryRewardPercent / 100}`)
+				.formula(`IF(${totalSubmRewardCell}>0,(${colJurTotal}${baseRowForCycle}-${colJurAbst}${baseRowForCycle})/($${colJurTotal}$${lastJuryRow}-$${colJurAbst}$${lastJuryRow})*${totalSubmRewardCell}*${juryRewardMultiplier}, 0)`)
 				.style(isLight ? floatNumberStyle : floatNumberStyleDark);
 			JurySheet.cell(baseRowForCycle, 3).number(jur.totalVotes).style(isLight ? defaultStyle : defaultStyleDark);
 			JurySheet.cell(baseRowForCycle, 4).number(jur.acceptAmount).style(isLight ? greenCellStyle : greenCellStyleDark);

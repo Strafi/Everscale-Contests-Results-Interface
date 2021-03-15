@@ -57,7 +57,7 @@ const ContestTableBody = ({
 				</Td>
 				<Td>
 					{submission.fileLink
-						? <a href={submission.fileLink} target='_blank' rel="noreferrer">{submission.id}</a>
+						? <a href={submission.fileLink} tabIndex='-1' target='_blank' rel="noreferrer">{submission.id}</a>
 						: submission.id
 					}
 				</Td>
@@ -65,7 +65,7 @@ const ContestTableBody = ({
 				<Td styles={greenCellStyles}>{submission.acceptAmount}</Td>
 				<Td styles={redCellStyles}>{submission.rejectAmount}</Td>
 				<Td className='contest-table__cell--wallet'>
-					<a href={walletUrl} target='_blank' rel="noreferrer">{submission.participantAddress}</a>
+					<a tabIndex='-1' href={walletUrl} target='_blank' rel="noreferrer">{submission.participantAddress}</a>
 				</Td>
 			</tr>
 		)
