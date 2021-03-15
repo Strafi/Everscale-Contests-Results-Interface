@@ -4,11 +4,10 @@
   "description": "Free TON Contests Results Interface",
   "main": "server.js",
   "scripts": {
-	"start": "npm run client:build && npm run server",
-    "client:build": "cd client && npm run build",
     "server": "nodemon server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn client\" \"yarn server\"",
     "client": "cd client && yarn start",
-    "dev": "concurrently --kill-others-on-fail \"yarn client\" \"yarn server\""
+    "client:build": "cd client && yarn build"
   },
   "repository": "https://github.com/Strafi/Free-TON-Contests-Results-Interface.git",
   "author": "Anton Solodkov <anton.solodkof@gmail.com>",
