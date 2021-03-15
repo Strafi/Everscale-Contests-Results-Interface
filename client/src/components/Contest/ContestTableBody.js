@@ -17,7 +17,9 @@ const ContestTableBody = ({
 		if (hasReward && submission.reward > 0)
 			totalRewardForParticipants += submission.reward;
 
-		const scoreToShow = submission.score.toFixed(2);
+		const scoreToShow = !submission.score || Number.isNaN(submission.score)
+			? ''
+			: submission.score.toFixed(2);
 		const isGrey = index === 0 || index % 2 === 0;
 		const rowClassName = `contest-table__row ${isGrey
 			? 'contest-table__row--grey' : ''
@@ -25,7 +27,7 @@ const ContestTableBody = ({
 		const walletUrl = createWalletUrl(submission.participantAddress);
 
 		const shouldShowInput = !submission.isRejected && submission.reward === -1;
-		const rewardToShow = formatRewardToShow(submission.reward);
+		const rewardToShow = typeof submission.reward === 'number' ? formatRewardToShow(submission.reward) : '';
 
 		return (
 			<tr className={rowClassName} key={`${submission.participantAddress}${submission.id}`}>
@@ -91,7 +93,7 @@ const ContestTableBody = ({
 			const isGrey = juryToRender.length === 0 || juryToRender.length % 2 === 0;
 			const rowClassName = `contest-table__row ${isGrey ? 'contest-table__row--grey' : ''}`;
 			const walletUrl = createWalletUrl(juryAddr);
-			const rewardToShow = formatRewardToShow(+reward.toFixed(2));
+			const rewardToShow = typeof reward === 'number' ? formatRewardToShow(+reward.toFixed(2)) : '';
 
 			juryToRender.push(
 				<tr className={rowClassName} key={juryAddr}>

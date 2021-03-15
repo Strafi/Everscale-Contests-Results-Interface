@@ -2,6 +2,8 @@
 @import '../../../styles/mixins.scss';
 
 .contest-header {
+	margin-bottom: 30px;
+
 	&__header {
 		margin-bottom: 12px;
 		font-weight: 700;
@@ -17,7 +19,7 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
-		margin: 20px 0 30px;
+		margin-top: 20px;
 
 		@media(max-width: 900px) {
 			flex-direction: column;

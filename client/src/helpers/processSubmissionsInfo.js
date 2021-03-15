@@ -39,6 +39,14 @@ function getSubmissionsWithFullInfo(sortedSubmissions, contestRewards) {
 	let prevReward;
 
 	const submissionsWithFullInfo = sortedSubmissions.map((subm, index, initialArray) => {
+		if (Number.isNaN(subm.score)) {
+			return {
+				...subm,
+				place: '',
+				reward: null,
+			}
+		}
+
 		const prevSubm = initialArray[index - 1];
 		const place = index + 1;
 		let reward;

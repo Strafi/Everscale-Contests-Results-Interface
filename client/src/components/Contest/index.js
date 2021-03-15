@@ -172,40 +172,45 @@ class Contest extends Component {
 	render() {
 		const { contestSubmissions, contestInfo, contestJury, addressFromUrl } = this.props;
 		const { isJuryView, juryRewardPercent, submissionsSortParams, jurySortParams } = this.state;
-
-		if (!contestInfo || !contestSubmissions || !contestJury)
-			return (<div className='contest'><Loader /></div>)
+		const shouldShowLoader = !contestInfo || !contestSubmissions || !contestJury;
+		const hasSubmissions = contestSubmissions?.length;
 
 		console.log(contestInfo, contestSubmissions, contestJury);
 		return (
 			<div className='contest'>
-				<ContestHeader
-					contestInfo={contestInfo}
-					isJuryView={isJuryView}
-					juryRewardPercent={juryRewardPercent}
-					setJuryView={this.setJuryView}
-					setJuryRewardPercent={this.setJuryRewardPercent}
-					exportExcel={this.exportExcel}
-				/>
-				<div className='contest-table-wrapper'>
-					<table className='contest-table'>
-						<ContestTableHeader
-							contestInfo={contestInfo}
-							isJuryView={isJuryView}
-							submissionsSortParams={submissionsSortParams}
-							jurySortParams={jurySortParams}
-							sortSubmissions={this.sortSubmissions}
-							sortJury={this.sortJury}
-						/>
-						<ContestTableBody
-							contestSubmissions={contestSubmissions}
-							contestJury={contestJury}
-							contestAddress={addressFromUrl}
-							isJuryView={isJuryView}
-							juryRewardPercent={juryRewardPercent}
-						/>
-					</table>
-				</div>
+				{contestInfo
+					&& <ContestHeader
+						contestInfo={contestInfo}
+						isJuryView={isJuryView}
+						juryRewardPercent={juryRewardPercent}
+						setJuryView={this.setJuryView}
+						setJuryRewardPercent={this.setJuryRewardPercent}
+						exportExcel={this.exportExcel}
+						isControlsVisible={hasSubmissions}
+					/>
+				}
+				{hasSubmissions
+					&& <div className='contest-table-wrapper'>
+						<table className='contest-table'>
+							<ContestTableHeader
+								contestInfo={contestInfo}
+								isJuryView={isJuryView}
+								submissionsSortParams={submissionsSortParams}
+								jurySortParams={jurySortParams}
+								sortSubmissions={this.sortSubmissions}
+								sortJury={this.sortJury}
+							/>
+							<ContestTableBody
+								contestSubmissions={contestSubmissions}
+								contestJury={contestJury}
+								contestAddress={addressFromUrl}
+								isJuryView={isJuryView}
+								juryRewardPercent={juryRewardPercent}
+							/>
+						</table>
+					</div>
+				}
+				{shouldShowLoader && <Loader />}
 			</div>
 		);
 	}

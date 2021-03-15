@@ -35,6 +35,21 @@
 		font-size: 16px;
 		font-weight: 400;
 		color: $grey;
+
+		&--underway {
+			font-weight: 600;
+			color: $dark-green;
+		}
+
+		&--voting {
+			font-weight: 600;
+			color: $dark-blue;
+		}
+
+		&--ended {
+			font-weight: 600;
+			color: $black;
+		}
 	}
 }
 
