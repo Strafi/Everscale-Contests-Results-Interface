@@ -93,37 +93,17 @@
 			position: absolute;
 			margin-top: 4px;
 			margin-left: 6px;
-			cursor: pointer;
-
-			path {
-				transition: stroke .2s;
-			}
-
-			&:hover {
-				path {
-					stroke: darken($cancel-color, 15%);
-				}
-			}
-
-			&:active {
-				path {
-					stroke: darken($cancel-color, 20%);
-				}
-			}
+			
+			@include cancel-button-effects;
 		}
 
 		a {
 			width: max-content;
 			color: $blue;
-			text-decoration: underline;
 			overflow: hidden;
 			text-overflow: ellipsis;
 
 			@include link-effects($blue);
-
-			&:hover {
-				text-decoration: underline;
-			}
 		}
 
 		&--active {

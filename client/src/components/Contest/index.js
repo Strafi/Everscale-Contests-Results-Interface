@@ -177,7 +177,6 @@ class Contest extends Component {
 			|| (!isJuryView && !hasSubmissions);
 		const shouldShowLoader = !contestInfo || !contestSubmissions || !contestJury;
 
-		console.log(contestInfo, contestSubmissions, contestJury);
 		return (
 			<div className='contest'>
 				{contestInfo

@@ -30,16 +30,19 @@
 		font-size: 24px;
 		font-weight: 600;
 		color: $dark-blue;
-
-		@include link-effects($dark-blue);
+		transition: color .2s;
 
 		&:hover {
+			color: darken($dark-blue, 15%);
+
 			.back-icon path {
 				stroke: darken($dark-blue, 15%);
 			}
 		}
 
 		&:active {
+			color: darken($dark-blue, 20%);
+
 			.back-icon path {
 				stroke: darken($dark-blue, 20%);
 			}
@@ -80,7 +83,6 @@
 		margin-top: 20px;
 		font-size: 16px;
 		color: $light-blue;
-		text-decoration: underline;
 
 		@include link-effects($light-blue);
 	}

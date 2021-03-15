@@ -2,6 +2,8 @@ const EMPTY_ADDRESS = '0:0000000000000000000000000000000000000000000000000000000
 
 const EXPLORER_BASE_URL = 'https://ton.live/accounts/accountDetails?id=';
 
+const MAIN_GOV_LINK = 'https://gov.freeton.org/';
+
 const REWARD_TRIGGER_FOR_INPUT = -1;
 
 const DEFAULT_GOVERNANCE = {
@@ -42,4 +44,5 @@ module.exports = {
 	DB_CONTENT_TYPES,
 	DEFAULT_GOVERNANCE,
 	REWARD_TRIGGER_FOR_INPUT,
+	MAIN_GOV_LINK,
 }

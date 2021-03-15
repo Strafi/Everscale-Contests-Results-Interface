@@ -1,5 +1,6 @@
 import {
 	SET_SELECTED_SUBGOV,
+	SET_IS_TUTORIAL_ACTIVE,
 } from '../actions/common';
 import { DEFAULT_GOVERNANCE } from 'src/constants';
 
@@ -8,6 +9,7 @@ const initialState = {
 		name: DEFAULT_GOVERNANCE.NAME,
 		fullName: DEFAULT_GOVERNANCE.FULL_NAME
 	},
+	isTutorialActive: false,
 }
   
 function commonReducer(state = initialState, action) {
@@ -18,6 +20,13 @@ function commonReducer(state = initialState, action) {
 			return {
 				...state,
 				selectedGovernance: payload || initialState.selectedGovernance,
+			}
+		}
+
+		case SET_IS_TUTORIAL_ACTIVE: {
+			return {
+				...state,
+				isTutorialActive: payload,
 			}
 		}
 
