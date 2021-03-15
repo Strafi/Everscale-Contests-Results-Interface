@@ -43,12 +43,12 @@ const exportExcel = (req, res, next) => {
 			floatNumberStyle,
 			headerStyle,
 			tableHeaderStyle,
+			tableFooterStyle,
 			linkStyle,
 			walletStyle,
 			greenCellStyle,
 			redCellStyle,
 			rewardNumberStyle,
-			rewardNumberStyleBold,
 			defaultStyleDark,
 			greenCellStyleDark,
 			redCellStyleDark,
@@ -86,10 +86,11 @@ const exportExcel = (req, res, next) => {
 		})
 		const colSubmReward = xl.getExcelAlpha(2);
 		const rowSubmReward = baseRowForCycle;
-		SubmissionsSheet.cell(baseRowForCycle, 1).string('Total:').style(tableHeaderStyle);
+		SubmissionsSheet.cell(baseRowForCycle, 1).string('Total:').style(tableFooterStyle);
 		SubmissionsSheet.cell(baseRowForCycle, 2)
 			.formula(`SUM(${colSubmReward}${START_ROW_FOR_TABLE}: ${colSubmReward}${rowSubmReward - 1})`)
-			.style(rewardNumberStyleBold);
+			.style(tableFooterStyle);
+		SubmissionsSheet.cell(baseRowForCycle, 3, baseRowForCycle, 7).style(tableFooterStyle);
 
 		JurySheet.column(2).setWidth(18);
 		JurySheet.column(3).setWidth(18);
@@ -122,22 +123,23 @@ const exportExcel = (req, res, next) => {
 			JurySheet.cell(baseRowForCycle, 7).link(`${EXPLORER_BASE_URL}${jur.address}`, jur.address).style(isLight ? walletStyle : walletStyleDark);
 			baseRowForCycle++;
 		});
-		JurySheet.cell(baseRowForCycle, 1).string('Total:').style(tableHeaderStyle);
+		JurySheet.cell(baseRowForCycle, 1).string('Total:').style(tableFooterStyle);
 		JurySheet.cell(baseRowForCycle, 2)
 			.formula(`SUM(${colSubmReward}${START_ROW_FOR_TABLE}: ${colSubmReward}${baseRowForCycle - 1})`)
 			.style(tableHeaderStyle);
 		JurySheet.cell(baseRowForCycle, 3)
 			.formula(`SUM(${colJurTotal}${START_ROW_FOR_TABLE}: ${colJurTotal}${baseRowForCycle - 1})`)
-			.style(rewardNumberStyleBold);
+			.style(tableFooterStyle);
 		JurySheet.cell(baseRowForCycle, 4)
 			.formula(`SUM(${xl.getExcelAlpha(4)}${START_ROW_FOR_TABLE}: ${xl.getExcelAlpha(4)}${baseRowForCycle - 1})`)
-			.style(rewardNumberStyleBold);
+			.style(tableFooterStyle);
 		JurySheet.cell(baseRowForCycle, 5)
 			.formula(`SUM(${colJurAbst}${START_ROW_FOR_TABLE}: ${colJurAbst}${baseRowForCycle - 1})`)
-			.style(rewardNumberStyleBold);
+			.style(tableFooterStyle);
 		JurySheet.cell(baseRowForCycle, 6)
 			.formula(`SUM(${xl.getExcelAlpha(6)}${START_ROW_FOR_TABLE}: ${xl.getExcelAlpha(6)}${baseRowForCycle - 1})`)
-			.style(rewardNumberStyleBold);
+			.style(tableFooterStyle);
+		JurySheet.cell(baseRowForCycle, 7).style(tableFooterStyle);
 
 		PayoutsSheet.column(1).setWidth(85);
 		PayoutsSheet.column(2).setWidth(25);

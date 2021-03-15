@@ -55,7 +55,42 @@ function createWbStyles(wb) {
 			bold: true,
 			size: 12,
 		},
+		fill: {
+			type: 'pattern',
+			patternType: 'solid',
+			bgColor: '#cccccc',
+			fgColor: '#cccccc',
+		},
+		border: {
+			left: { color: '#b8b8b8', style: 'thin' },
+			right: { color: '#b8b8b8', style: 'thin' },
+			top: { color: '#b8b8b8', style: 'thin' },
+			bottom: { color: '#b8b8b8', style: 'thin' }
+		},
 		numberFormat: '#,##0.00'
+	});
+	const tableFooterStyle = wb.createStyle({
+		alignment: {
+			horizontal: 'center',
+		},
+		font: {
+			color: '#303030',
+			bold: true,
+			size: 12,
+		},
+		fill: {
+			type: 'pattern',
+			patternType: 'solid',
+			bgColor: '#cccccc',
+			fgColor: '#cccccc',
+		},
+		border: {
+			left: { color: '#b8b8b8', style: 'thin' },
+			right: { color: '#b8b8b8', style: 'thin' },
+			top: { color: '#b8b8b8', style: 'thin' },
+			bottom: { color: '#b8b8b8', style: 'thin' }
+		},
+		numberFormat: '#,##0'
 	});
 	const linkStyle = wb.createStyle({
 		alignment: {
@@ -249,6 +284,7 @@ function createWbStyles(wb) {
 		floatNumberStyle,
 		headerStyle,
 		tableHeaderStyle,
+		tableFooterStyle,
 		linkStyle,
 		walletStyle,
 		greenCellStyle,
