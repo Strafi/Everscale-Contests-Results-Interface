@@ -1,4 +1,4 @@
-import { SORT_BY_VALUES_PARTICIPANTS } from 'src/constants';
+import { SORT_BY_VALUES_PARTICIPANTS, REWARD_TRIGGER_FOR_INPUT } from 'src/constants';
 import sortSubmissions from './sortSubmissions';
 import parseRewards from './parseRewards';
 
@@ -56,7 +56,7 @@ function getSubmissionsWithFullInfo(sortedSubmissions, contestRewards) {
 		} else if (parsedRewards) {
 			reward = parsedRewards[place] || 0;
 		} else {
-			reward = -1;
+			reward = REWARD_TRIGGER_FOR_INPUT;
 		}
 
 		if (prevSubm && prevSubm.score === subm.score && subm.score !== 0) {

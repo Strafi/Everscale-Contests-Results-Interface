@@ -89,6 +89,29 @@
 			}
 		}
 
+		.cancel-icon {
+			position: absolute;
+			margin-top: 4px;
+			margin-left: 6px;
+			cursor: pointer;
+
+			path {
+				transition: stroke .2s;
+			}
+
+			&:hover {
+				path {
+					stroke: darken($cancel-color, 15%);
+				}
+			}
+
+			&:active {
+				path {
+					stroke: darken($cancel-color, 20%);
+				}
+			}
+		}
+
 		a {
 			width: max-content;
 			color: $blue;

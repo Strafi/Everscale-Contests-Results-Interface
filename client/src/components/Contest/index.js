@@ -172,8 +172,10 @@ class Contest extends Component {
 	render() {
 		const { contestSubmissions, contestInfo, contestJury, addressFromUrl } = this.props;
 		const { isJuryView, juryRewardPercent, submissionsSortParams, jurySortParams } = this.state;
+		const hasSubmissions = !!contestSubmissions?.length;
+		const shouldShowEmpty = (isJuryView && contestJury && !Object.keys(contestJury).length)
+			|| (!isJuryView && !hasSubmissions);
 		const shouldShowLoader = !contestInfo || !contestSubmissions || !contestJury;
-		const hasSubmissions = contestSubmissions?.length;
 
 		console.log(contestInfo, contestSubmissions, contestJury);
 		return (
@@ -189,7 +191,7 @@ class Contest extends Component {
 						isControlsVisible={hasSubmissions}
 					/>
 				}
-				{hasSubmissions
+				{(hasSubmissions && !shouldShowEmpty)
 					&& <div className='contest-table-wrapper'>
 						<table className='contest-table'>
 							<ContestTableHeader
@@ -211,6 +213,7 @@ class Contest extends Component {
 					</div>
 				}
 				{shouldShowLoader && <Loader />}
+				{(!shouldShowLoader && shouldShowEmpty) && <Loader isFailed/>}
 			</div>
 		);
 	}

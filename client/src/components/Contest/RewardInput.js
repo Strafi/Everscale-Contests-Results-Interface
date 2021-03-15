@@ -10,10 +10,10 @@ const RewardInput = ({ contestAddress, submissionId }) => {
 		if (!event.target.value)
 			return setReward(undefined);
 
-		const percent = +event.target.value;
+		const reward = +event.target.value;
 
-		if (percent && !Number.isNaN(percent)) {
-			setReward(percent);
+		if (reward && !Number.isNaN(reward)) {
+			setReward(reward);
 		}
 	}
 

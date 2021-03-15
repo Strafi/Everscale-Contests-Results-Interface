@@ -1,5 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { updateSubmissionReward } from 'src/store/actions/contest';
 import { createWalletUrl, formatRewardToShow, calcRewardForJury } from 'src/helpers';
+import { REWARD_TRIGGER_FOR_INPUT } from 'src/constants';
+import { CancelIcon } from 'src/components/icons';
 import Td from './ContestTableTd';
 import RewardInput from './RewardInput';
 import { greenCellStyles, redCellStyles } from './styles';
@@ -7,9 +11,14 @@ import { greenCellStyles, redCellStyles } from './styles';
 const ContestTableBody = ({
 	contestSubmissions, isJuryView, contestJury, juryRewardPercent, contestAddress
 }) => {
-	if (!contestSubmissions.length)
-		return (<div>no subm</div>)
-
+	const dispatch = useDispatch();
+	const removeSubmissionReward = (submissionId) => {
+		dispatch(updateSubmissionReward({
+			contestAddress,
+			submissionId,
+			reward: REWARD_TRIGGER_FOR_INPUT,
+		}));
+	}
 	let totalRewardForParticipants = 0;
 
 	const submissionsToRender = contestSubmissions.map((submission, index) => {
@@ -26,7 +35,7 @@ const ContestTableBody = ({
 		} ${submission.isRejected ? 'contest-table__row--rejected' : ''}`;
 		const walletUrl = createWalletUrl(submission.participantAddress);
 
-		const shouldShowInput = !submission.isRejected && submission.reward === -1;
+		const shouldShowInput = !submission.isRejected && submission.reward === REWARD_TRIGGER_FOR_INPUT;
 		const rewardToShow = typeof submission.reward === 'number' ? formatRewardToShow(submission.reward) : '';
 
 		return (
@@ -38,7 +47,12 @@ const ContestTableBody = ({
 							contestAddress={contestAddress}
 							submissionId={submission.id}
 						/>
-						: rewardToShow
+						: <>
+							{rewardToShow}
+							{rewardToShow && !submission.isRejected
+								&& <CancelIcon onClick={() => removeSubmissionReward(submission.id)} />
+							}
+						</>
 					}
 				</Td>
 				<Td>

@@ -13,6 +13,22 @@
 	&__title {
 		font-weight: 600;
 		font-size: 20px;
+
+		@include link-effects($dark-blue);
+	}
+
+	&__status {
+		font-size: 20px;
+		font-weight: 600;
+		color: $black;
+
+		&--underway {
+			color: $dark-green;
+		}
+
+		&--voting {
+			color: $dark-blue;
+		}
 	}
 
 	&__controls {

@@ -1,9 +1,11 @@
+import { REWARD_TRIGGER_FOR_INPUT } from 'src/constants';
+
 function prepareSubmissions(contestSubmissions) {
 	return contestSubmissions.map(subm => ({
-		place: subm.place,
-		reward: subm.reward === -1 ? 0 : subm.reward,
+		place: subm.place || 0,
+		reward: subm.reward === REWARD_TRIGGER_FOR_INPUT ? 0 : subm.reward || 0,
 		id: subm.id,
-		score: subm.score,
+		score: subm.score || 0,
 		acceptAmount: subm.acceptAmount,
 		rejectAmount: subm.rejectAmount,
 		address: subm.participantAddress,

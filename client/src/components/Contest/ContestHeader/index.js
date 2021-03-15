@@ -6,9 +6,17 @@ import './index.scss';
 const ContestHeader = ({
 	contestInfo, setJuryView, exportExcel, isJuryView, juryRewardPercent, setJuryRewardPercent, isControlsVisible
 }) => {
+	const now = Date.now();
+	const isUnderway = now < contestInfo.contestDeadline * 1000;
+	const isVoting = now > contestInfo.contestDeadline * 1000 && now < contestInfo.votingDeadline * 1000;
+	const statusClassName = `contest-header__status ${isUnderway ? 'contest-header__status--underway' : ''} ${isVoting
+		? 'contest-header__status--voting' : ''
+	}`;
+	const statusText = isUnderway ? '(Underway)' : isVoting ? '(Voting)' : '';
+
 	return (
 		<div className='contest-header'>
-			<div className='contest-header__header'>Results</div>
+			<div className='contest-header__header'>Results <span className={statusClassName}>{statusText}</span></div>
 			<a
 				href={contestInfo.link}
 				target='_blank'

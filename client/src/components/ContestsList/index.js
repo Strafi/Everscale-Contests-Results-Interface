@@ -101,7 +101,12 @@ class ContestsList extends Component {
 					governances={governances}
 					selectedGovernance={selectedGovernance}
 				/>
-				{!contestsInfo.length || isLoaderVisible ? <Loader /> : this.renderContestItems()}
+				{isLoaderVisible
+					? <Loader />
+					: contestsInfo?.length
+						? this.renderContestItems()
+						: <Loader isFailed />
+				}
 			</div>
 		);
 	}
