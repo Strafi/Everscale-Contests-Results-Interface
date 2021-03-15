@@ -33,6 +33,43 @@
 		}
 	}
 
+	&--searching {
+		@keyframes searching-transform {
+			0% {
+				transform: scale(1);
+			}
+			50% {
+				transform: scale(0.7);
+			}
+			100% {
+				transform: scale(1);
+			} 
+		}
+		@keyframes searching-color {
+			0% {
+				stroke: $grey;
+			}
+			50% {
+				stroke: $blue;
+			}
+			100% {
+				stroke: $grey;
+			} 
+		}
+
+		.lens-icon {
+			animation-name: searching-transform;
+			animation-duration: 1.5s;
+			animation-iteration-count: infinite;
+
+			path, line {
+				animation-name: searching-color;
+				animation-duration: 1.5s;
+				animation-iteration-count: infinite;
+			}
+		}
+	}
+
 	&:not(.search-bar-container--invalid) {
 		.lens-icon {
 			&:hover {
@@ -53,7 +90,10 @@
 		width: 22px;
 		height: 20px;
 		margin-left: 3px;
-		transition: stroke .2s;
 		cursor: pointer;
+
+		path, line {
+			transition: stroke .2s;
+		}
 	}
 }

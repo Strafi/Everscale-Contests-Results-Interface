@@ -17,7 +17,7 @@ class ContestsList extends Component {
 		try {
 			const { contestsInfo } = this.props;
 
-			if (!contestsInfo.length)
+			if (!contestsInfo || contestsInfo.length <= 1)
 				this.setState({ isLoaderVisible: true });
 
 			await this.fetchGovernances();

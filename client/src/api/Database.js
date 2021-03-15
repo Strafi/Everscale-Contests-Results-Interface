@@ -15,6 +15,7 @@ class DatabaseApi {
 		const query = {
 			skip,
 			content_type: DB_CONTENT_TYPES.CONTEST,
+			order: '-sys.createdAt'
 		};
 
 		if (governance) {

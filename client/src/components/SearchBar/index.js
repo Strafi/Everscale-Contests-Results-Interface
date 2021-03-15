@@ -12,13 +12,14 @@ class SearchBar extends Component {
 	state = {
 		inputValue: '',
 		isInvalidAddress: false,
+		isSearching: false,
 	}
 
 	searchContest = async () => {
-		const { inputValue: contestAddress } = this.state;
+		const { inputValue: contestAddress, isSearching } = this.state;
 		const { contestsInfo, history, setContestInfo } = this.props;
 
-		if (!contestAddress)
+		if (!contestAddress || isSearching)
 			return;
 
 		const isValidAddress = await TonApi.isAddressValid(contestAddress);
@@ -29,7 +30,11 @@ class SearchBar extends Component {
 		const contestInfoFromRedux = contestsInfo[contestAddress];
 
 		if (!contestInfoFromRedux) {
+			this.setState({ isSearching: true });
+
 			const contestInfoFromBlockchain = await TonApi.getContestInfo(contestAddress);
+
+			this.setState({ isSearching: false });
 
 			if (!contestInfoFromBlockchain)
 				return this.setState({ isInvalidAddress: true });
@@ -62,9 +67,11 @@ class SearchBar extends Component {
 	}
 
 	render() {
-		const { inputValue, isInvalidAddress } = this.state;
+		const { inputValue, isInvalidAddress, isSearching } = this.state;
 
-		const searchBarClassName = `search-bar-container ${isInvalidAddress ? 'search-bar-container--invalid' : ''}`;
+		const searchBarClassName = `search-bar-container ${isInvalidAddress ? 'search-bar-container--invalid' : ''} ${isSearching
+			? 'search-bar-container--searching' : ''
+		}`;
 
 		return (
 			<div className={searchBarClassName}>
