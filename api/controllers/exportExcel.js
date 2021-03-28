@@ -154,7 +154,7 @@ const exportExcel = (req, res, next) => {
 					.formula(`${SUBMISSIONS_SHEET_NAME}!$${xl.getExcelAlpha(7)}$${refTableRowForCycle}`)
 					.style(walletStyle);
 				PayoutsSheet.cell(baseRowForCycle, 2)
-					.formula(`ROUND(${SUBMISSIONS_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle}, 0)*${PAYOUT_MODIFIER}`)
+					.formula(`${SUBMISSIONS_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle}*${PAYOUT_MODIFIER}`)
 					.style(payoutsStyle);
 				baseRowForCycle++;
 			}
@@ -167,7 +167,7 @@ const exportExcel = (req, res, next) => {
 				.formula(`${JURY_SHEET_NAME}!$${xl.getExcelAlpha(7)}$${refTableRowForCycle}`)
 				.style(walletStyle);
 			PayoutsSheet.cell(baseRowForCycle, 2)
-				.formula(`ROUND(${JURY_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle},0)*${PAYOUT_MODIFIER}`)
+				.formula(`${JURY_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle}*${PAYOUT_MODIFIER}`)
 				.style(payoutsStyle);
 			baseRowForCycle++;
 			refTableRowForCycle++;
