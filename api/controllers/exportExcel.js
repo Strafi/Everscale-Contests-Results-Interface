@@ -48,6 +48,7 @@ const exportExcel = (req, res, next) => {
 			walletStyle,
 			greenCellStyle,
 			redCellStyle,
+			payoutsStyle,
 			rewardNumberStyle,
 			defaultStyleDark,
 			greenCellStyleDark,
@@ -153,21 +154,21 @@ const exportExcel = (req, res, next) => {
 					.formula(`${SUBMISSIONS_SHEET_NAME}!$${xl.getExcelAlpha(7)}$${refTableRowForCycle}`)
 					.style(walletStyle);
 				PayoutsSheet.cell(baseRowForCycle, 2)
-					.formula(`${SUBMISSIONS_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle}*${PAYOUT_MODIFIER}`)
-					.style(rewardNumberStyle);
+					.formula(`ROUND(${SUBMISSIONS_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle}, 0)*${PAYOUT_MODIFIER}`)
+					.style(payoutsStyle);
 				baseRowForCycle++;
 			}
 			refTableRowForCycle++;
 		})
 
 		refTableRowForCycle = START_ROW_FOR_TABLE;
-		jury.forEach(jur => {
+		jury.forEach(() => {
 			PayoutsSheet.cell(baseRowForCycle, 1)
 				.formula(`${JURY_SHEET_NAME}!$${xl.getExcelAlpha(7)}$${refTableRowForCycle}`)
 				.style(walletStyle);
 			PayoutsSheet.cell(baseRowForCycle, 2)
-				.formula(`${JURY_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle}*${PAYOUT_MODIFIER}`)
-				.style(floatNumberStyle);
+				.formula(`ROUND(${JURY_SHEET_NAME}!$${colSubmReward}$${refTableRowForCycle},0)*${PAYOUT_MODIFIER}`)
+				.style(payoutsStyle);
 			baseRowForCycle++;
 			refTableRowForCycle++;
 		})

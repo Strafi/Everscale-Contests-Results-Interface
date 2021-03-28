@@ -127,6 +127,12 @@ function createWbStyles(wb) {
 			size: 12,
 		}
 	});
+	const payoutsStyle = wb.createStyle({
+		alignment: {
+			horizontal: 'left',
+		},
+		numberFormat: '#',
+	})
 	
 	const greenCellStyleDark = wb.createStyle({
 		alignment: {
@@ -289,6 +295,7 @@ function createWbStyles(wb) {
 		walletStyle,
 		greenCellStyle,
 		redCellStyle,
+		payoutsStyle,
 		defaultStyleDark,
 		greenCellStyleDark,
 		redCellStyleDark,
