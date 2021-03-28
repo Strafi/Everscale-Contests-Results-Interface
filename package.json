@@ -7,7 +7,7 @@
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"yarn client\" \"yarn server\"",
     "client": "cd client && yarn start",
-    "build": "cd client && yarn build"
+    "client:build": "cd client && yarn build"
   },
   "repository": "https://github.com/Strafi/Free-TON-Contests-Results-Interface.git",
   "author": "Anton Solodkov <anton.solodkof@gmail.com>",
