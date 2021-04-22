@@ -22,15 +22,12 @@ class ContestsList extends Component {
 
 			await this.fetchGovernances();
 			await this.fetchContests();
-
-			this.setState({ isLoaderVisible: false });
 		} catch(err) {
 			console.error('Fetching contests failed: ', err);
 
 			setTimeout(async () => {
 				await this.fetchGovernances();
 				await this.fetchContests();
-				this.setState({ isLoaderVisible: false });
 			}, 5000);
 		}
 	}
@@ -40,7 +37,6 @@ class ContestsList extends Component {
 			if (prevProps.selectedGovernance.name !== this.props.selectedGovernance.name) {
 				this.setState({ isLoaderVisible: true });
 				await this.fetchContests();
-				this.setState({ isLoaderVisible: false });
 			}
 		} catch(err) {
 			console.error('Fetching contests failed: ', err);
@@ -58,12 +54,17 @@ class ContestsList extends Component {
 	fetchContests = async () => {
 		const { setBulkContestsInfo, selectedGovernance } = this.props;
 
+		this.lastSelectedGovernance = selectedGovernance.name;
+
 		const contestsFromDB = await DatabaseApi.getContests({ governance: selectedGovernance.name });
 		const contestsWithFullInfo = await Promise.all(
 			contestsFromDB.items.map(contest => this.getContestFullInfo(contest))
 		);
 
-		setBulkContestsInfo(contestsWithFullInfo);
+		if (this.lastSelectedGovernance === selectedGovernance.name) {
+			setBulkContestsInfo(contestsWithFullInfo);
+			this.setState({ isLoaderVisible: false });
+		}
 	}
 
 	getContestFullInfo = async contestFromDB => {
