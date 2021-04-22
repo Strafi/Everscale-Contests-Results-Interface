@@ -1,6 +1,6 @@
 {
   "name": "results-interface",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Free TON Contests Results Interface",
   "main": "server.js",
   "scripts": {
