@@ -1,67 +1,31 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setSelectedSubgov } from 'src/store/actions/common';
-import { ArrowIcon } from 'src/components/icons';
+import { OptionsList } from 'src/components';
 
 const SubgovSwitcher = ({ governances, selectedGovernance }) => {
-	const switcherBlockRef = useRef(null);
-	const [isListOpen, setIsListOpen] = useState(false);
+	const dispatch = useDispatch();
 
-	const handleClickOutside = useCallback(event => {
-		if (!switcherBlockRef?.current?.contains(event.target) && isListOpen)
-			setIsListOpen(false);
-	}, [isListOpen]);
+	const governancesToRender = governances
+		.filter(gov => gov.name !== selectedGovernance.name)
+		.map(gov => (
+			<div
+				className='options-list__list-item'
+				onClick={() => dispatch(setSelectedSubgov(gov))}
+				key={gov.name}
+			>
+				{gov.fullName}
+			</div>
+		));
 
-	useEffect(() => {
-		document.addEventListener('click', handleClickOutside);
-
-		return () => {
-			document.removeEventListener('click', handleClickOutside);
-		}
-	}, [handleClickOutside]);
-
-	const switcherBlockClassName = `subgov-switcher__switch-block ${isListOpen
-		? 'subgov-switcher__switch-block--active' : ''
-	}`
-
-	const listGovernances = governances.filter(gov => gov.name !== selectedGovernance.name);
+	const selectedItem = `Subgov: ${selectedGovernance.fullName}`;
 
 	return (
 		<div className='subgov-switcher'>
 			<div className='subgov-switcher__title'>Contests</div>
-			<div
-				ref={switcherBlockRef}
-				onClick={() => setIsListOpen(!isListOpen)}
-				className={switcherBlockClassName}
-			>
-				{`Subgov: ${selectedGovernance.fullName}`}
-				<ArrowIcon />
-				<SubgovList isListOpen={isListOpen} governances={listGovernances} />
-			</div>
-		</div>
-	);
-}
-
-const SubgovList = ({ governances, isListOpen }) => {
-	const dispatch = useDispatch();
-
-	const governancesToRender = governances.map(gov => (
-		<div
-			className='subgov-switcher__list-item'
-			onClick={() => dispatch(setSelectedSubgov(gov))}
-			key={gov.name}
-		>
-			{gov.fullName}
-		</div>
-	))
-
-	const listClassName = `subgov-switcher__list ${isListOpen
-		? 'subgov-switcher__list--visible' : ''
-	}`;
-
-	return (
-		<div className={listClassName}>
-			{governancesToRender}
+			<OptionsList selectedItem={selectedItem}>
+				{governancesToRender}
+			</OptionsList>
 		</div>
 	);
 }

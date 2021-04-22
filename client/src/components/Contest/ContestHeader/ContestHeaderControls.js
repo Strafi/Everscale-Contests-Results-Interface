@@ -29,7 +29,7 @@ const ContestHeaderControls = ({
 
 
 	return (
-		<div className='contest-header__controls'>
+		<div className='contest-header__controls contest-header__controls--center'>
 			<div className='contest-header__view-switcher'>
 				<div onClick={() => setJuryView(false)} className={participantsButtonClassName}>
 					Participants

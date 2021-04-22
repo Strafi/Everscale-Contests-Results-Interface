@@ -2,7 +2,9 @@ import { SORT_BY_VALUES_PARTICIPANTS, REWARD_TRIGGER_FOR_INPUT } from 'src/const
 import sortSubmissions from './sortSubmissions';
 import parseRewards from './parseRewards';
 
-function processSubmissionsInfo(initialSubmissionsInfo, contestRewards) {
+function processSubmissionsInfo(initialSubmissionsInfo, contestRewards, options = {}) {
+	const { isCountRejectAsZero } = options;
+
 	const submissions = initialSubmissionsInfo.map(submissionInfo => {
 		const isRejected = submissionInfo.marks.length === 0
 			? submissionInfo.rejectAmount > 0
@@ -17,7 +19,10 @@ function processSubmissionsInfo(initialSubmissionsInfo, contestRewards) {
 				return previousValue + parseInt(currentValue, 10);
 			}, 0);
 
-			const score = marksSum / newSubmInfo.marks.length;
+			const scoreDelimiter = isCountRejectAsZero
+				? newSubmInfo.marks.length + newSubmInfo.rejectAmount
+				: newSubmInfo.marks.length;
+			const score = marksSum / scoreDelimiter;
 			const normalizedScore = score.toFixed(2);
 			newSubmInfo.score = +normalizedScore;
 		}
