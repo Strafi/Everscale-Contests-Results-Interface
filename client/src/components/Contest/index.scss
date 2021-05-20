@@ -52,8 +52,13 @@
 
 		&:first-child {
 			width: $first-child-width;
-			padding-left: 24px;
+			padding-left: 28px;
 			text-align: start;
+
+			.cancel-icon {
+				margin-left: -21px;
+				margin-top: 4px;
+			}
 		}
 
 		&:last-child {

@@ -4,6 +4,7 @@ import {
 	ADD_BULK_CONTESTS_INFO,
 	SET_SUBMISSIONS_INFO,
 	SET_JURY_INFO,
+	SET_REMOVED_JUROR,
 	UPDATE_SUBMISSION_REWARD,
 } from '../actions/contest';
 
@@ -11,6 +12,7 @@ const initialState = {
 	contestsInfo: {},
 	submissionsInfo: {},
 	jurorsInfo: {},
+	removedJurors: {},
 }
   
 function contestReducer(state = initialState, action) {
@@ -93,6 +95,24 @@ function contestReducer(state = initialState, action) {
 			return {
 				...state,
 				submissionsInfo: newSubmissionsInfo,
+			}
+		}
+
+		case SET_REMOVED_JUROR: {
+			const { address, juryAddr } = payload
+
+			const removedJurorsForContest = [ ...(state.removedJurors[address] || []) ];
+
+			removedJurorsForContest.push(juryAddr);
+
+			const newRemovedJurors = {
+				...state.removedJurors,
+				[address]: removedJurorsForContest,
+			};
+
+			return {
+				...state,
+				removedJurors: newRemovedJurors,
 			}
 		}
 

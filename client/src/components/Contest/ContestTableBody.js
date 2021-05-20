@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { updateSubmissionReward } from 'src/store/actions/contest';
+import { updateSubmissionReward, setRemovedJuror } from 'src/store/actions/contest';
 import { createWalletUrl, formatRewardToShow, calcRewardForJury } from 'src/helpers';
 import { REWARD_TRIGGER_FOR_INPUT } from 'src/constants';
 import { CancelIcon } from 'src/components/icons';
@@ -12,12 +12,15 @@ const ContestTableBody = ({
 	contestSubmissions, isJuryView, contestJury, juryRewardPercent, contestAddress
 }) => {
 	const dispatch = useDispatch();
-	const removeSubmissionReward = (submissionId) => {
+	const removeSubmissionReward = submissionId => {
 		dispatch(updateSubmissionReward({
 			contestAddress,
 			submissionId,
 			reward: REWARD_TRIGGER_FOR_INPUT,
 		}));
+	}
+	const removeJury = juryAddr => {
+		dispatch(setRemovedJuror(contestAddress, juryAddr));
 	}
 	let totalRewardForParticipants = 0;
 
@@ -111,7 +114,7 @@ const ContestTableBody = ({
 
 			juryToRender.push(
 				<tr className={rowClassName} key={juryAddr}>
-					<Td>{id}</Td>
+					<Td><CancelIcon onClick={() => removeJury(juryAddr)} />{id}</Td>
 					<Td>{rewardToShow}</Td>
 					<Td>{juryVotes}</Td>
 					<Td styles={greenCellStyles}>{acceptAmount}</Td>

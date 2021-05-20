@@ -4,6 +4,7 @@ export const ADD_BULK_CONTESTS_INFO = 'contest/ADD_BULK_CONTESTS_INFO';
 export const SET_SUBMISSIONS_INFO = 'contest/SET_SUBMISSIONS_INFO';
 export const SET_JURY_INFO = 'contest/SET_JURY_INFO';
 export const UPDATE_SUBMISSION_REWARD = 'contest/UPDATE_SUBMISSION_REWARD';
+export const SET_REMOVED_JUROR = 'contest/SET_REMOVED_JUROR';
 
 export const setContestInfo = contest => dispatch => {
 	dispatch({
@@ -52,3 +53,11 @@ export const updateSubmissionReward = payload => dispatch => {
 		payload,
 	})
 }
+
+export const setRemovedJuror = (address, juryAddr) => ({
+	type: SET_REMOVED_JUROR,
+	payload: {
+		address,
+		juryAddr,
+	}
+});

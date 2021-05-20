@@ -1,3 +1,4 @@
+import store from 'src/store';
 import { TonClient } from '@tonclient/core';
 import { libWeb } from '@tonclient/lib-web';
 
@@ -6,6 +7,7 @@ import contestAbi from 'src/contest.abi';
 class TonApi {
 	constructor() {
 		this.bocCache = new Map();
+		this.votesPerJurorCache = {};
 	}
 
 	init() {
@@ -19,7 +21,7 @@ class TonApi {
 		});
 	}
 
-	async getContestSubmissionsAndJurors(contestAddress) {
+	async getContestSubmissionsAndJurors(contestAddress, useCache = false) {
 		if (!contestAddress)
 			return;
 
@@ -46,7 +48,9 @@ class TonApi {
 			const juryStats = {};
 			const submissionsWithStats = await Promise.all(
 				submissions.map(async subm => { 
-					const votesPerJuror = await this.getVotesPerJurorForSubmission(contestAddress, subm.id);
+					const { removedJurors } = store.getState().contest;
+					const removedJurorsForContest = removedJurors[contestAddress] || [];
+					const votesPerJuror = await this.getVotesPerJurorForSubmission(contestAddress, subm.id, useCache);
 					const {
 						jurorsFor,
 						jurorsAbstained,
@@ -54,14 +58,31 @@ class TonApi {
 						marks,
 					} = votesPerJuror;
 
+					const jurorsForArr = [];
+					const marksObj = marks.reduce((acc, mark, index) => {
+						const juryAddr = jurorsFor[index];
+
+						if (removedJurorsForContest.includes(juryAddr))
+							return acc;
+
+						jurorsForArr.push(juryAddr);
+
+						return [...acc, { mark, juryAddr }];
+					}, []);
+
+					const jurorsAbstainedArr = jurorsAbstained.filter(jury => !removedJurorsForContest.includes(jury));
+					const jurorsRejectArr = jurorsAgainst.filter(jury => !removedJurorsForContest.includes(jury));
+
 					const sumbStats = {
-						marks: marks,
-						abstainAmount: jurorsAbstained.length,
-						rejectAmount: jurorsAgainst.length,
+						marks: marksObj,
+						jurorsAbstained: jurorsAbstainedArr,
+						jurorsReject: jurorsRejectArr,
+						abstainAmount: jurorsAbstainedArr.length,
+						rejectAmount: jurorsRejectArr.length,
 					};
 
 					function updateJurorsStatFromCollection(collection, stat) {
-						collection.forEach((address, index) => {
+						collection.forEach((address) => {
 							if (juryStats[address]) {
 								juryStats[address][stat] = (juryStats[address][stat] || 0) + 1;
 							} else {
@@ -72,9 +93,9 @@ class TonApi {
 						})
 					}
 
-					updateJurorsStatFromCollection(jurorsFor, 'acceptAmount');
-					updateJurorsStatFromCollection(jurorsAbstained, 'abstainAmount');
-					updateJurorsStatFromCollection(jurorsAgainst, 'rejectAmount');
+					updateJurorsStatFromCollection(jurorsForArr, 'acceptAmount');
+					updateJurorsStatFromCollection(jurorsAbstainedArr, 'abstainAmount');
+					updateJurorsStatFromCollection(jurorsRejectArr, 'rejectAmount');
 
 					return {
 						...subm,
@@ -97,15 +118,24 @@ class TonApi {
 		}
 	}
 
-	async getVotesPerJurorForSubmission(contestAddress, submId) {
+	async getVotesPerJurorForSubmission(contestAddress, submId, useCache) {
 		if (!contestAddress || !submId)
 			return;
+		
+		if (useCache && this.votesPerJurorCache[contestAddress]?.has(submId))
+			return this.votesPerJurorCache[contestAddress].get(submId);
 
 		const votesPerJuror = await this.runContestFunction(
 			contestAddress,
 			'getVotesPerJuror',
 			{ id: submId },
 		);
+
+		if (this.votesPerJurorCache[contestAddress]) {
+			this.votesPerJurorCache[contestAddress].set(submId, votesPerJuror);
+		} else {
+			this.votesPerJurorCache[contestAddress] = new Map([[submId, votesPerJuror]]);
+		}
 
 		return votesPerJuror;
 	}

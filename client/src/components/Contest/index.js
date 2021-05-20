@@ -42,7 +42,7 @@ class Contest extends Component {
 
 	componentDidUpdate(prevProps) {
 		try {
-			const { addressFromUrl } = this.props;
+			const { addressFromUrl, removedJurorsForContest } = this.props;
 
 			if (prevProps.addressFromUrl !== addressFromUrl) {
 				this.setJuryView(false);
@@ -53,6 +53,8 @@ class Contest extends Component {
 					jurySortParams: defaultJurySortParams,
 				});
 				this.fetchSubmissionsInfo();
+			} else if (prevProps.removedJurorsForContest !== removedJurorsForContest) {
+				this.fetchSubmissionsInfo(true) //useCache = true;
 			}
 		} catch(err) {
 			console.error('Fetching submissions failed: ', err);
@@ -61,7 +63,7 @@ class Contest extends Component {
 		}
 	}
 
-	fetchSubmissionsInfo = async () => {
+	fetchSubmissionsInfo = async (useCache = false) => {
 		const {
 			addressFromUrl,
 			contestInfo: contestInfoFromRedux,
@@ -88,7 +90,7 @@ class Contest extends Component {
 		if (fullContestInfo.juryRewardPercent)
 			this.setJuryRewardPercent(fullContestInfo.juryRewardPercent);
 
-		const { submissionsWithStats, juryStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl);
+		const { submissionsWithStats, juryStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl, useCache);
 		const processedSubmissions = processSubmissionsInfo(submissionsWithStats, fullContestInfo.rewards, { isCountRejectAsZero });
 		const sortedJury = sortJury(juryStats, jurySortParams.field, jurySortParams.isAskending);
 
@@ -232,7 +234,7 @@ class Contest extends Component {
 }
 
 const mapStateToProps = ({ contest }, { location }) => {
-	const { contestsInfo, submissionsInfo, jurorsInfo } = contest;
+	const { contestsInfo, submissionsInfo, jurorsInfo, removedJurors } = contest;
 
 	const searchString = location.search;
 	const searchParams = new URLSearchParams(searchString);
@@ -240,11 +242,13 @@ const mapStateToProps = ({ contest }, { location }) => {
 	const contestInfo = contestsInfo[addressFromUrl];
 	const contestSubmissions = submissionsInfo[addressFromUrl];
 	const contestJury = jurorsInfo[addressFromUrl];
+	const removedJurorsForContest = removedJurors[addressFromUrl];
 
 	return {
 		contestInfo,
 		contestSubmissions,
 		contestJury,
+		removedJurorsForContest,
 		addressFromUrl,
 	}
 };

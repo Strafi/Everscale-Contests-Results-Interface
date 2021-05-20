@@ -15,8 +15,8 @@ function processSubmissionsInfo(initialSubmissionsInfo, contestRewards, options 
 			newSubmInfo.reward = 0;
 			newSubmInfo.score = 0;
 		} else {
-			const marksSum = newSubmInfo.marks.reduce((previousValue, currentValue) => {
-				return previousValue + parseInt(currentValue, 10);
+			const marksSum = newSubmInfo.marks.reduce((previousValue, currentMarkObj) => {
+				return previousValue + parseInt(currentMarkObj.mark, 10);
 			}, 0);
 
 			const scoreDelimiter = isCountRejectAsZero
