@@ -167,6 +167,19 @@
 		transition: color .2s;
 	}
 
+	&__threshold-input {
+		height: 30px;
+		width: 55px;
+		padding: 4px 6px 4px 12px;
+		margin-right: 8px;
+		font-size: 14px;
+		font-weight: 300;
+		color: $black;
+		border: 1px solid $table-input-color;
+		border-radius: 6px;
+		outline: none;
+	}
+
 	&__export-button {
 		display: flex;
 		align-items: center;

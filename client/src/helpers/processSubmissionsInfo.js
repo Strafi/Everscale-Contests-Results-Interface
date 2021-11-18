@@ -3,7 +3,8 @@ import sortSubmissions from './sortSubmissions';
 import parseRewards from './parseRewards';
 
 function processSubmissionsInfo(initialSubmissionsInfo, contestRewards, options = {}) {
-	const { isCountRejectAsZero } = options;
+	const { isCountRejectAsZero, threshold } = options;
+	const shouldCheckThreshold = typeof threshold === 'number';
 
 	const submissions = initialSubmissionsInfo.map(submissionInfo => {
 		const isRejected = submissionInfo.marks.length === 0
@@ -25,6 +26,7 @@ function processSubmissionsInfo(initialSubmissionsInfo, contestRewards, options 
 			const score = marksSum / scoreDelimiter;
 			const normalizedScore = score.toFixed(2);
 			newSubmInfo.score = +normalizedScore;
+			newSubmInfo.isUnderThreshold = shouldCheckThreshold && normalizedScore < threshold;
 		}
 
 		newSubmInfo.acceptAmount = newSubmInfo.marks.length;
@@ -56,7 +58,7 @@ function getSubmissionsWithFullInfo(sortedSubmissions, contestRewards) {
 		const place = index + 1;
 		let reward;
 
-		if (subm.isRejected) {
+		if (subm.isRejected || subm.isUnderThreshold) {
 			reward = 0;
 		} else if (parsedRewards) {
 			reward = parsedRewards[place] || 0;

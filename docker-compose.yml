@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  contests:
+    build:
+      context: .
+    container_name: contests
+    image: asolodkov/contests
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - ./logs:/logs
+    networks:
+      - contests-network
+    ports:
+      - 3000:3000
+
+networks:
+  contests-network:
+    driver: bridge

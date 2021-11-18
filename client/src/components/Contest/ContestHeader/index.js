@@ -14,6 +14,8 @@ const ContestHeader = ({
 	isControlsVisible,
 	isCountRejectAsZero,
 	setIsCountRejectAsZero,
+	threshold,
+	setThreshold,
 }) => {
 	const now = Date.now();
 	const isUnderway = now < contestInfo.contestDeadline * 1000;
@@ -22,6 +24,19 @@ const ContestHeader = ({
 		? 'contest-header__status--voting' : ''
 	}`;
 	const statusText = isUnderway ? '(Underway)' : isVoting ? '(Voting)' : '';
+
+	const handleThresholdChange = threshold => {
+		if (!threshold)
+			return setThreshold(undefined);
+
+		const normalizedThreshold = +threshold;
+
+		if (!Number.isNaN(normalizedThreshold)
+			&& normalizedThreshold >= 0
+			&& normalizedThreshold <= 10
+		)
+			setThreshold(normalizedThreshold);
+	}
 
 	return (
 		<div className='contest-header'>
@@ -37,15 +52,25 @@ const ContestHeader = ({
 						{contestInfo.title}
 					</a>
 				</div>
-				<OptionsList height={42} selectedItem='Options'>
+				<OptionsList height={90} selectedItem='Options'>
 					<div className='contest-header__options-list-item'>
 						<input
 							value={isCountRejectAsZero}
 							onChange={e => setIsCountRejectAsZero(e.target.checked)}
 							type="checkbox"
-							id="cb1"
+							id="cbcountzero"
 						/>
-						<label htmlFor="cb1">Count "Reject" as 0</label>
+						<label htmlFor="cbcountzero">Count "Reject" as 0</label>
+					</div>
+					<div className='contest-header__options-list-item'>
+						<input
+							value={threshold}
+							onChange={e => handleThresholdChange(e.target.value)}
+							type="number"
+							id="thresholdinput"
+							className='contest-header__threshold-input'
+						/>
+						<label htmlFor="thresholdinput">Threshold</label>
 					</div>
 				</OptionsList>
 			</div>

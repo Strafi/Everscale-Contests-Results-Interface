@@ -48,7 +48,7 @@
 		visibility: hidden;
 		opacity: 0;
 		left: 0;
-		bottom: calc(0px - var(--height));
+		top: 0;
 		height: var(--height);
 		width: $governance-switcher-width;
 		background-color: $white;
@@ -61,7 +61,7 @@
 		&--visible {
 			visibility: visible;
 			opacity: 1;
-			bottom: calc(-8px - var(--height));
+			top: calc(100% + 8px);
 		}
 
 		&-item {

@@ -1,13 +1,15 @@
 {
   "name": "results-interface",
-  "version": "1.1.0",
-  "description": "Free TON Contests Results Interface",
+  "version": "1.7.0",
+  "description": "Everscale (ex. Free TON) Contests Results Interface",
   "main": "server.js",
   "scripts": {
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"yarn client\" \"yarn server\"",
     "client": "cd client && yarn start",
-    "client:build": "cd client && yarn build"
+    "client:build": "cd client && yarn build",
+    "client:modules": "cd client && npm install",
+	"docker:run": "docker run -t -i --env NODE_ENV=production --env PORT=3001 -p 3001:3001 contests"
   },
   "repository": "https://github.com/Strafi/Free-TON-Contests-Results-Interface.git",
   "author": "Anton Solodkov <anton.solodkof@gmail.com>",

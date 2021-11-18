@@ -25,6 +25,7 @@ class Contest extends Component {
 	state = {
 		isJuryView: false,
 		isCountRejectAsZero: false,
+		threshold: undefined,
 		juryRewardPercent: undefined,
 		submissionsSortParams: defaultSubmissionsSortParams,
 		jurySortParams: defaultJurySortParams,
@@ -72,7 +73,7 @@ class Contest extends Component {
 			setJuryInfo,
 			history
 		} = this.props;
-		const { jurySortParams, isCountRejectAsZero } = this.state;
+		const { jurySortParams, isCountRejectAsZero, threshold } = this.state;
 
 		const isValidAddress = await TonApi.isAddressValid(addressFromUrl);
 
@@ -91,7 +92,7 @@ class Contest extends Component {
 			this.setJuryRewardPercent(fullContestInfo.juryRewardPercent);
 
 		const { submissionsWithStats, juryStats } = await TonApi.getContestSubmissionsAndJurors(addressFromUrl, useCache);
-		const processedSubmissions = processSubmissionsInfo(submissionsWithStats, fullContestInfo.rewards, { isCountRejectAsZero });
+		const processedSubmissions = processSubmissionsInfo(submissionsWithStats, fullContestInfo.rewards, { isCountRejectAsZero, threshold });
 		const sortedJury = sortJury(juryStats, jurySortParams.field, jurySortParams.isAskending);
 
 		setSubmissionsInfo(addressFromUrl, processedSubmissions);
@@ -134,11 +135,21 @@ class Contest extends Component {
 
 	setIsCountRejectAsZero = isCountRejectAsZero => {
 		const { addressFromUrl, contestSubmissions, contestInfo, setSubmissionsInfo } = this.props;
+		const { threshold } = this.state;
 
-		this.setState({ isCountRejectAsZero });
+		const processedSubmissions = processSubmissionsInfo(contestSubmissions, contestInfo.rewards, { isCountRejectAsZero, threshold });
 
-		const processedSubmissions = processSubmissionsInfo(contestSubmissions, contestInfo.rewards, { isCountRejectAsZero });
+		this.setState({ isCountRejectAsZero, submissionsSortParams: defaultSubmissionsSortParams });
+		setSubmissionsInfo(addressFromUrl, processedSubmissions);
+	}
 
+	setThreshold = threshold => {
+		const { addressFromUrl, contestSubmissions, contestInfo, setSubmissionsInfo } = this.props;
+		const { isCountRejectAsZero } = this.state;
+
+		const processedSubmissions = processSubmissionsInfo(contestSubmissions, contestInfo.rewards, { threshold, isCountRejectAsZero });
+
+		this.setState({ threshold, submissionsSortParams: defaultSubmissionsSortParams });
 		setSubmissionsInfo(addressFromUrl, processedSubmissions);
 	}
 
@@ -184,7 +195,7 @@ class Contest extends Component {
 
 	render() {
 		const { contestSubmissions, contestInfo, contestJury, addressFromUrl } = this.props;
-		const { isJuryView, juryRewardPercent, submissionsSortParams, jurySortParams, isCountRejectAsZero } = this.state;
+		const { isJuryView, juryRewardPercent, submissionsSortParams, jurySortParams, isCountRejectAsZero, threshold } = this.state;
 		const hasSubmissions = !!contestSubmissions?.length;
 		const shouldShowEmpty = (isJuryView && contestJury && !Object.keys(contestJury).length)
 			|| (!isJuryView && !hasSubmissions);
@@ -203,6 +214,8 @@ class Contest extends Component {
 						isControlsVisible={hasSubmissions}
 						isCountRejectAsZero={isCountRejectAsZero}
 						setIsCountRejectAsZero={this.setIsCountRejectAsZero}
+						threshold={threshold}
+						setThreshold={this.setThreshold}
 					/>
 				}
 				{(hasSubmissions && !shouldShowEmpty)

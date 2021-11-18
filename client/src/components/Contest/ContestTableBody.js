@@ -35,10 +35,10 @@ const ContestTableBody = ({
 		const isGrey = index === 0 || index % 2 === 0;
 		const rowClassName = `contest-table__row ${isGrey
 			? 'contest-table__row--grey' : ''
-		} ${submission.isRejected ? 'contest-table__row--rejected' : ''}`;
+		} ${submission.isRejected || submission.isUnderThreshold ? 'contest-table__row--rejected' : ''}`;
 		const walletUrl = createWalletUrl(submission.participantAddress);
 
-		const shouldShowInput = !submission.isRejected && submission.reward === REWARD_TRIGGER_FOR_INPUT;
+		const shouldShowInput = !submission.isRejected && !submission.isUnderThreshold && submission.reward === REWARD_TRIGGER_FOR_INPUT;
 		const rewardToShow = typeof submission.reward === 'number' ? formatRewardToShow(submission.reward) : '';
 
 		return (
@@ -52,7 +52,7 @@ const ContestTableBody = ({
 						/>
 						: <>
 							{rewardToShow}
-							{rewardToShow && !submission.isRejected
+							{rewardToShow && !submission.isRejected && !submission.isUnderThreshold
 								&& <CancelIcon onClick={() => removeSubmissionReward(submission.id)} />
 							}
 						</>
