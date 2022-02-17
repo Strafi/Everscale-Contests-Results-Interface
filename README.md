@@ -1,4 +1,4 @@
-# Everscale (ex. Free TON) Contests Results Interface
+# Everscale Contests Results Interface
 ## How To Run
 If you don't want (or can not) to install the software mentioned below, you can access the pre-build interface by this link: https://freeton-stats.org/
 
