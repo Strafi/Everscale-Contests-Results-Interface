@@ -1,6 +1,6 @@
 {
   "name": "results-interface",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Everscale (ex. Free TON) Contests Results Interface",
   "main": "server.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "client:modules": "cd client && npm install",
 	"docker:run": "docker run -t -i --env NODE_ENV=production --env PORT=3001 -p 3001:3001 contests"
   },
-  "repository": "https://github.com/Strafi/Free-TON-Contests-Results-Interface.git",
+  "repository": "https://github.com/Strafi/Everscale-Contests-Results-Interface.git",
   "author": "Anton Solodkov <anton.solodkof@gmail.com>",
   "license": "MIT",
   "dependencies": {
